@@ -1,0 +1,18 @@
+# Modified (more portable):
+PKG_CPPFLAGS = 
+PKG_CXXFLAGS =
+
+PKG_LIBS = `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"`
+
+# Enable Dependency Tracking
+# PKG_CXXFLAGS = -O2 -Wall -march=native -mtune=native
+# PKG_CXXFLAGS += -MMD -MP
+
+# Use precompiled headers (Optional)
+# PKG_CPPFLAGS = -Winvalid-pch -include precompiled.h
+
+# Link to Armadillo and BLAS/LAPACK
+# PKG_LIBS = -larmadillo -lblas -llapack
+
+# Enable parallel compilation
+MAKEFLAGS += -j$(nproc)

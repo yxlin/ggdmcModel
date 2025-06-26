@@ -1,0 +1,22 @@
+Package: ggdmcModel
+Type: Package
+Title: Model builders for the ggdmc package
+Version: 0.2.8.9
+Date: 2025-06-01  
+Authors@R: c(person(given = "Yi-Shin", family = "Lin", role = c("aut", "cre"), email = "yishinlin001@gmail.com"))
+Maintainer: Yi-Shin Lin <yishinlin001@gmail.com>
+Description: Provides tools for specifying and examining experimental design associated with cognitive models (e.g., diffusion decision models) for use with the 'ggdmc' package. 
+License: GPL (>= 2)  
+Imports: 
+    Rcpp (>= 1.0.7),
+    methods
+Depends: 
+    R (>= 3.5.0)
+LinkingTo: 
+    Rcpp (>= 1.0.7),
+    RcppArmadillo (>= 0.10.7.5.0),
+    ggdmcHeaders
+Suggests: testthat
+RoxygenNote: 7.3.2
+Encoding: UTF-8
+NeedsCompilation: yes

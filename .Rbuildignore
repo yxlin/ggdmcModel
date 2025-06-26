@@ -1,0 +1,7 @@
+^\.Rproj\.user$
+^\.renv$
+^\.lintr$
+^tests$
+^\.vscode$
+^\.build\.r$
+^.*\.Rproj$
