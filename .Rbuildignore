@@ -1,7 +1,12 @@
 ^\.Rproj\.user$
 ^\.renv$
-^\.lintr$
+
 ^tests$
 ^\.vscode$
-^\.build\.r$
+
 ^.*\.Rproj$
+^LICENSE\.md$
+
+^.clang-format$
+^\.build\.r$
+^\.lintr$

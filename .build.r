@@ -1,5 +1,10 @@
 q(save = "no")
 
+tools::showNonASCIIfile("DESCRIPTION")
+devtools::check()
+usethis::use_gpl_license(version = 2) # or use_gpl_license(version = 2)
+
+
 devtools::test()
 devtools::build()
 devtools::document()

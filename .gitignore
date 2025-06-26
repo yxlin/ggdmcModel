@@ -47,3 +47,8 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+.build.r
+.clang-format
+.lintr
+.Rbuildignore

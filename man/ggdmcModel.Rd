@@ -4,9 +4,11 @@
 \name{ggdmcModel}
 \alias{ggdmcModel-package}
 \alias{ggdmcModel}
-\title{Tools for Understanding How to Fit Cognitive Hierarchical Models}
+\title{Model builders for the ggdmc package}
 \description{
-\pkg{ggdmcModel} provides associated tools for fitting Bayesian inference for the cognitive model.
+\pkg{ggdmcModel} provides tools for specifying and examining experimental
+design associated with cognitive models (e.g., diffusion decision models)
+for use with the 'ggdmc' package.
 }
 \references{
 Lin, Y.-S. & Strickland, L., (2019). Evidence accumulation models with R: A
