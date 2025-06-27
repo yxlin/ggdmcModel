@@ -53,7 +53,7 @@
 #' }
 NULL
 
-#' Model Parameter Table and Mapping Utilities
+#' Tabulate Model Parameter
 #'
 #' Functions for inspecting and displaying parameter structures in models
 #' built with `ggdmcModel`.
@@ -61,42 +61,26 @@ NULL
 #' @name model_parameter_utils
 #' @aliases table_parameters print_parameter_map
 #'
-#' @param model_r An S4 model object created by [ggdmcModel::BuildModel()]
+#' @param model_r An S4 model object created by \code{BuildModel}.
 #' @param parameters_r Numeric vector of parameter values (for `table_parameters` only)
 #'
 #' @return
 #' \describe{
-#'   \item{table_parameters}{Returns a DataFrame showing how parameters map to model
-#' components}
+#'   \item{table_parameters}{Returns a List in matrix form showing how parameters
+#' map to model parameters}
 #'   \item{print_parameter_map}{Prints the parameter mapping structure and
 #' returns invisibly as integer status (0 for success)}
 #' }
 #'
 #' @details
-#' These functions help analyze the parameter structure of diffusion models:
+#' These functions help analyse whether the parameter and the factor are
+#' constructed as \code{BuildModel} specified:
 #'
 #' \itemize{
-#'   \item `table_parameters()` creates a tabular representation showing how parameters
-#'         map to stimuli, responses, and other model components
-#'   \item `print_parameter_map()` displays the model's parameter mapping structure
-#'         in human-readable format
+#'   \item `table_parameters()` creates a tabular representation showing how
+#'         parameters map to stimuli, responses, and other model components
+#'   \item `print_parameter_map()` displays the model's parameter mapping.
 #' }
-#'
-#' Both functions work with models built using `ggdmcModel::BuildModel()` with the
-#' following typical structure:
-#' ```
-#' model <- ggdmcModel::BuildModel(
-#'     p_map = list(
-#'         a = "1", v = "1", z = "1", d = "1", sz = "1", sv = "1",
-#'         t0 = "1", st0 = "1", s = "1", precision = "1"
-#'     ),
-#'     match_map = list(M = list(s1 = "r1", s2 = "r2")),
-#'     factors = list(S = c("s1", "s2")),
-#'     constants = c(d = 0, s = 1, st0 = 0, sv = 0, precision = 3),
-#'     accumulators = c("r1", "r2"),
-#'     type = "fastdm"
-#' )
-#' ```
 #'
 #' @examples
 #' \dontrun{

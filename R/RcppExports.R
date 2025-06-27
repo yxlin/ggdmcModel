@@ -31,11 +31,13 @@ get_factor_cells_r <- function(parameter_map_r, factors_r, accumulators_r) {
     .Call('_ggdmcModel_get_factor_cells_r', PACKAGE = 'ggdmcModel', parameter_map_r, factors_r, accumulators_r)
 }
 
+#' @rdname model_parameter_utils
 #' @export
 table_parameters <- function(model_r, parameters_r) {
     .Call('_ggdmcModel_table_parameters', PACKAGE = 'ggdmcModel', model_r, parameters_r)
 }
 
+#' @rdname model_parameter_utils
 #' @export
 print_parameter_map <- function(model_r) {
     .Call('_ggdmcModel_print_parameter_map', PACKAGE = 'ggdmcModel', model_r)
@@ -44,7 +46,7 @@ print_parameter_map <- function(model_r) {
 #' Find All Possible Conditions
 #'
 #' @description
-#' Constructs all possible condition combinations (i.e., cells) from
+#' Constructs all possible condition combinations (i.e., cells)
 #' based on experimental factors, parameter mappings, and response
 #' definitions. Returns both cell names and sorted factor definitions.
 #'
@@ -80,6 +82,7 @@ print_parameter_map <- function(model_r) {
 #'   \item Verify factor/parameter compatibility
 #'   \item Generate condition labels for model specification
 #' }
+#' This function primarily is to debug the internal process of model building.
 #'
 #' @examples
 #' # A simple example
@@ -124,9 +127,10 @@ build_cell_names_r <- function(parameter_map_r, factors_r, responses_r) {
 #'        of accumulator names. I use `accumulator` to remind the
 #'        difference of the implicit accumulator and the manifested
 #'        response. Mostly, you may mix the two; however, sometimes,
-#'        such a mixed use may result in errors.
-#' @param match_map_r An Rcpp::List defining which constitute a correct
-#' and a error response. (This is a nested list structure).
+#'        merging the two concepts may result in conceptual errors.
+#' @param match_map_r An Rcpp::List that defines the mapping between
+#' stimuli and responses, specifying which response are considered correct
+#' or incorrect. (This is a nested list structure).
 #'
 #' @return An R logical array with dimensions:
 #' \itemize{
@@ -134,7 +138,9 @@ build_cell_names_r <- function(parameter_map_r, factors_r, responses_r) {
 #'   \item 2nd dimension: Conditions (row)
 #'   \item 3rd dimension: Responses  (slice)
 #' }
-#' Where `TRUE` indicates valid parameter-condition-response combinations.
+#' Where `TRUE` indicates the model assumes that a model parameter (1st
+#' dimension) affects a condition (2nd dimension) at a particular response
+#' (3rd dimension).
 #'
 #' @details
 #' The function:
@@ -189,8 +195,9 @@ build_model_boolean_r <- function(parameter_map_r, factors_r, accumulators_r, ma
 #' @param parameter_M_r a string vector of parameter x condition.
 #'
 #' @return A character vector where each element represents a
-#' parameter-condition binding in the format "parameter=condition".
-#' The special 'M' response mapping is automatically added.
+#' parameter-condition binding in the format "parameter.condition".
+#' The special 'M' factor is to represent matching and non-matching
+#' true/false in the LBA model.
 #'
 #' @details
 #' This function:

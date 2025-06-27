@@ -2,19 +2,19 @@
 % Please edit documentation in R/model.R
 \name{BuildDMI}
 \alias{BuildDMI}
-\title{Build Data Model Instance (DMI)}
+\title{Build Data Model Instance}
 \usage{
 BuildDMI(data, model)
 }
 \arguments{
 \item{data}{A dataset to be converted to a DMI object. It must be a data
-frame .}
+frame.}
 
 \item{model}{A model specification object of class `model` containing type,
 parameters, and other model-specific information.}
 }
 \value{
-A `dmi` (Design Model Instance) object or list of `dmi` objects,
+A `dmi` object or list of `dmi` objects (multiple subjects),
 with structure:
 \itemize{
   \item For LBA models: Returns a named list of `dmi` objects (one per subject)
@@ -22,26 +22,27 @@ with structure:
 }
 Each `dmi` object contains:
 \itemize{
-  \item `model` - The input model specification
-  \item `data` - The processed data
+  \item `model` - The model specification
+  \item `data` - The processed data (a list)
   \item `node_1_index` - Index mapping for first nodes (LBA only)
-  \item `is_positive_drift` - Logical vector for drift directions (LBA only)
+  \item `is_positive_drift` - Logical vector for drift directions. For LBA,
+each element corresponds to an accumulator. In the DDM, each element
+represents a condition. Additionally, in the DDM, the positive direction
+corresponds to a correct response (i.e., upper bound), and vice versa.
 }
 }
 \description{
-Constructs a DMI (Data Model Instance) object from data and model
+Constructs a Data Model Instance (DMI) object from data and model
 specifications, handling different model types including
-Linear Ballistic Accumulator, Decision Diffusion and
-hyperparameters (i.e., regular statiatical models).
+Linear Ballistic Accumulator, Diffusion Decision and
+hyperparameters (i.e., common statiatical models).
 }
 \section{Model Types Supported}{
 
 \describe{
   \item{`"lba"`}{Linear Ballistic Accumulator model}
   \item{`"hyper"`}{Hyperparameter model (single subject)}
-  \item{`"fastdm"`}{Decision Diffusion model}
-  \item{`"norm"`}{Old LBA type name, obsoleted}
-  \item{`"rd"`}{Old DDM type name, obsoleted}
+  \item{`"fastdm"`}{Diffusion Decision model}
 }
 }
 
@@ -51,7 +52,7 @@ Throws errors for:
 \itemize{
   \item S4 objects passed as `data` (suggesting reversed arguments)
   \item Unsupported model types
-  \item Requests for norm model type (directs user to use LBA)
+  \item Requests for norm model type (directs user to use 'lba')
 }
 }
 

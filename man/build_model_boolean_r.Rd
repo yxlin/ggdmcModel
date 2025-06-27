@@ -20,10 +20,11 @@ assocation.}
 of accumulator names. I use `accumulator` to remind the
 difference of the implicit accumulator and the manifested
 response. Mostly, you may mix the two; however, sometimes,
-such a mixed use may result in errors.}
+merging the two concepts may result in conceptual errors.}
 
-\item{match_map_r}{An Rcpp::List defining which constitute a correct
-and a error response. (This is a nested list structure).}
+\item{match_map_r}{An Rcpp::List that defines the mapping between
+stimuli and responses, specifying which response are considered correct
+or incorrect. (This is a nested list structure).}
 }
 \value{
 An R logical array with dimensions:
@@ -32,7 +33,9 @@ An R logical array with dimensions:
   \item 2nd dimension: Conditions (row)
   \item 3rd dimension: Responses  (slice)
 }
-Where `TRUE` indicates valid parameter-condition-response combinations.
+Where `TRUE` indicates the model assumes that a model parameter (1st
+dimension) affects a condition (2nd dimension) at a particular response
+(3rd dimension).
 }
 \description{
 Constructs a 3D boolean array indicating

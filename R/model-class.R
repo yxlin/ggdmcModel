@@ -34,13 +34,13 @@ setClass("model", slots = c(
 ## Data-model Instance  ------------------------------------------------------
 #' The S4 class for the Data Model Instance
 #'
-#' The class is to represent a data-model instance, joinING a model object
+#' The class is to represent a data-model instance, joining a model object
 #' with a data list.
 #'
 #' @slot model A model object
-#' @slot data A data list or a data frame (for fitting parameters).
-#' @slot node_1_index a LBA specific parameter
-#' @slot is_positive_drift another LBA specific parameter
+#' @slot data A data list
+#' @slot node_1_index A LBA specific parameter, indicating the node 1 index
+#' @slot is_positive_drift Whether the drift rate is positive
 #' @export
 setClass("dmi",
   slots = c(

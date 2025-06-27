@@ -27,7 +27,7 @@ combinations
 }
 }
 \description{
-Constructs all possible condition combinations (i.e., cells) from
+Constructs all possible condition combinations (i.e., cells)
 based on experimental factors, parameter mappings, and response
 definitions. Returns both cell names and sorted factor definitions.
 }
@@ -48,6 +48,7 @@ This function is typically used to:
   \item Verify factor/parameter compatibility
   \item Generate condition labels for model specification
 }
+This function primarily is to debug the internal process of model building.
 }
 
 \examples{

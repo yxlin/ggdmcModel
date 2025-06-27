@@ -176,6 +176,7 @@ std_mat_to_NumericMatrix(const std::vector<std::vector<double>> &input)
     return out;
 }
 
+//' @rdname model_parameter_utils
 //' @export
 // [[Rcpp::export]]
 Rcpp::List table_parameters(const Rcpp::S4 &model_r,
@@ -212,6 +213,7 @@ Rcpp::List table_parameters(const Rcpp::S4 &model_r,
     return out;
 }
 
+//' @rdname model_parameter_utils
 //' @export
 // [[Rcpp::export]]
 int print_parameter_map(const Rcpp::S4 &model_r)
@@ -237,7 +239,7 @@ int print_parameter_map(const Rcpp::S4 &model_r)
 //' Find All Possible Conditions
 //'
 //' @description
-//' Constructs all possible condition combinations (i.e., cells) from
+//' Constructs all possible condition combinations (i.e., cells)
 //' based on experimental factors, parameter mappings, and response
 //' definitions. Returns both cell names and sorted factor definitions.
 //'
@@ -273,6 +275,7 @@ int print_parameter_map(const Rcpp::S4 &model_r)
 //'   \item Verify factor/parameter compatibility
 //'   \item Generate condition labels for model specification
 //' }
+//' This function primarily is to debug the internal process of model building.
 //'
 //' @examples
 //' # A simple example
@@ -330,9 +333,10 @@ Rcpp::List build_cell_names_r(const Rcpp::List &parameter_map_r,
 //'        of accumulator names. I use `accumulator` to remind the
 //'        difference of the implicit accumulator and the manifested
 //'        response. Mostly, you may mix the two; however, sometimes,
-//'        such a mixed use may result in errors.
-//' @param match_map_r An Rcpp::List defining which constitute a correct
-//' and a error response. (This is a nested list structure).
+//'        merging the two concepts may result in conceptual errors.
+//' @param match_map_r An Rcpp::List that defines the mapping between
+//' stimuli and responses, specifying which response are considered correct
+//' or incorrect. (This is a nested list structure).
 //'
 //' @return An R logical array with dimensions:
 //' \itemize{
@@ -340,7 +344,9 @@ Rcpp::List build_cell_names_r(const Rcpp::List &parameter_map_r,
 //'   \item 2nd dimension: Conditions (row)
 //'   \item 3rd dimension: Responses  (slice)
 //' }
-//' Where `TRUE` indicates valid parameter-condition-response combinations.
+//' Where `TRUE` indicates the model assumes that a model parameter (1st
+//' dimension) affects a condition (2nd dimension) at a particular response
+//' (3rd dimension).
 //'
 //' @details
 //' The function:
@@ -392,11 +398,6 @@ build_model_boolean_r(const Rcpp::List &parameter_map_r,
     std::vector<std::vector<std::vector<bool>>> cpp_out =
         build_model_boolean(parameter_map, factors, accumulators_r, match_map);
 
-    // arma::ucube arma_out = build_model_boolean_arma(parameter_map, factors,
-    //                                                 accumulators_r,
-    //                                                 match_map);
-
-    // return arma_out;
     return std_ucube_to_R_ucube(cpp_out);
 }
 
@@ -422,8 +423,9 @@ build_model_boolean_r(const Rcpp::List &parameter_map_r,
 //' @param parameter_M_r a string vector of parameter x condition.
 //'
 //' @return A character vector where each element represents a
-//' parameter-condition binding in the format "parameter=condition".
-//' The special 'M' response mapping is automatically added.
+//' parameter-condition binding in the format "parameter.condition".
+//' The special 'M' factor is to represent matching and non-matching
+//' true/false in the LBA model.
 //'
 //' @details
 //' This function:

@@ -5,7 +5,7 @@
 \alias{dmi-class}
 \title{The S4 class for the Data Model Instance}
 \description{
-The class is to represent a data-model instance, joinING a model object
+The class is to represent a data-model instance, joining a model object
 with a data list.
 }
 \section{Slots}{
@@ -13,10 +13,10 @@ with a data list.
 \describe{
 \item{\code{model}}{A model object}
 
-\item{\code{data}}{A data list or a data frame (for fitting parameters).}
+\item{\code{data}}{A data list}
 
-\item{\code{node_1_index}}{a LBA specific parameter}
+\item{\code{node_1_index}}{A LBA specific parameter, indicating the node 1 index}
 
-\item{\code{is_positive_drift}}{another LBA specific parameter}
+\item{\code{is_positive_drift}}{Whether the drift rate is positive}
 }}
 

@@ -10,3 +10,4 @@
 ^.clang-format$
 ^\.build\.r$
 ^\.lintr$
+^\.github$

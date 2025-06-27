@@ -4,11 +4,11 @@
 \name{ggdmcModel}
 \alias{ggdmcModel-package}
 \alias{ggdmcModel}
-\title{Model builders for the ggdmc package}
+\title{Model Builders for 'ggdmc' Package}
 \description{
 \pkg{ggdmcModel} provides tools for specifying and examining experimental
 design associated with cognitive models (e.g., diffusion decision models)
-for use with the 'ggdmc' package.
+for use with 'ggdmc' package.
 }
 \references{
 Lin, Y.-S. & Strickland, L., (2019). Evidence accumulation models with R: A

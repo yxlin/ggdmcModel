@@ -1,9 +1,9 @@
 ######### Helper functions---------------------------------------------
-#' Model builders for the ggdmc package
+#' Model Builders for 'ggdmc' Package
 #'
 #' \pkg{ggdmcModel} provides tools for specifying and examining experimental
 #' design associated with cognitive models (e.g., diffusion decision models)
-#' for use with the 'ggdmc' package.
+#' for use with 'ggdmc' package.
 #'
 #' @keywords package
 #'
@@ -282,31 +282,41 @@ NULL
 #' level, resulting in a correct or an incorrect response.
 #' @param constants the argument allows the user to decide which parameter is set to a
 #' constant value.
-#' @param type the model type defined in the package, "rd" or "lba".
+#' @param type the model type defined in the package, "fastdm", "hyper", or "lba".
 #' @param verbose print design information
 #' @examples
 #' ## A diffusion decision model
 #' \dontrun{
-#' model <- BuildModel(
+#' model <- ggdmcModel::BuildModel(
 #'     p_map = list(
-#'         a = "1", v = "1", z = "1", d = "1", sz = "1", sv = "1",
-#'         t0 = "1", st0 = "1"
+#'         a = c("S", "COLOUR"), v = c("NOISE"), z = "1", d = "1", sz = "1", sv = "1",
+#'         t0 = "1", st0 = "1", s = "1", precision = "1"
 #'     ),
-#'     match_map = list(M = list(s1 = "r1", s2 = "r2")),
-#'     factors = list(S = c("s1", "s2")),
-#'     constants = c(st0 = 0, d = 0),
-#'     accumulators = c("r1", "r2"),
-#'     type = "rd"
+#'     match_map = list(M = list(left = "z_key", right = "x_key")),
+#'     factors = list(
+#'         S = c("left", "right"), COLOUR = c("red", "blue"),
+#'         NOISE = c("high", "moderate", "low")
+#'     ),
+#'     constants = c(d = 0, s = 1, st0 = 0, sv = 0, precision = 3),
+#'     accumulators = c("z_key", "x_key"),
+#'     type = "fastdm"
 #' )
 #' }
 #' \dontrun{
 #' ## A LBA model
-#' model <- BuildModel(
-#'     p_map = list(A = "1", B = "1", mean_v = "M", sd_v = "1", st0 = "1", t0 = "1"),
-#'     match_map = list(M = list(s1 = "r1", s2 = "r2")),
-#'     factors = list(S = c("s1", "s2")),
-#'     constants = c(A = 0.75, mean_v.false = 1.5, sd_v = 1, st0 = 0),
-#'     accumulators = c("r1", "r2"),
+#' model <- ggdmcModel::BuildModel(
+#'     p_map = list(
+#'         A = "1", B = c("S", "COLOR"), t0 = "1", mean_v = c("NOISE", "M"),
+#'         sd_v = "M", st0 = "1"
+#'     ),
+#'     match_map = list(M = list(left = "z_key", right = "x_key")),
+#'     factors = list(
+#'         S = c("left", "right"),
+#'         COLOR = c("red", "blue"),
+#'         NOISE = c("high", "moderate", "low")
+#'     ),
+#'     constants = c(st0 = 0, sd_v.false = 1),
+#'     accumulators = c("z_key", "x_key"),
 #'     type = "lba"
 #' )
 #' }
@@ -358,19 +368,19 @@ BuildModel <- function(
     out
 }
 
-#' Build Data Model Instance (DMI)
+#' Build Data Model Instance
 #'
-#' Constructs a DMI (Data Model Instance) object from data and model
+#' Constructs a Data Model Instance (DMI) object from data and model
 #' specifications, handling different model types including
-#' Linear Ballistic Accumulator, Decision Diffusion and
-#' hyperparameters (i.e., regular statiatical models).
+#' Linear Ballistic Accumulator, Diffusion Decision and
+#' hyperparameters (i.e., common statiatical models).
 #'
 #' @param data A dataset to be converted to a DMI object. It must be a data
-#'        frame .
+#'        frame.
 #' @param model A model specification object of class `model` containing type,
 #'        parameters, and other model-specific information.
 #'
-#' @return A `dmi` (Design Model Instance) object or list of `dmi` objects,
+#' @return A `dmi` object or list of `dmi` objects (multiple subjects),
 #' with structure:
 #' \itemize{
 #'   \item For LBA models: Returns a named list of `dmi` objects (one per subject)
@@ -378,19 +388,20 @@ BuildModel <- function(
 #' }
 #' Each `dmi` object contains:
 #' \itemize{
-#'   \item `model` - The input model specification
-#'   \item `data` - The processed data
+#'   \item `model` - The model specification
+#'   \item `data` - The processed data (a list)
 #'   \item `node_1_index` - Index mapping for first nodes (LBA only)
-#'   \item `is_positive_drift` - Logical vector for drift directions (LBA only)
+#'   \item `is_positive_drift` - Logical vector for drift directions. For LBA,
+#' each element corresponds to an accumulator. In the DDM, each element
+#' represents a condition. Additionally, in the DDM, the positive direction
+#' corresponds to a correct response (i.e., upper bound), and vice versa.
 #' }
 #'
 #' @section Model Types Supported:
 #' \describe{
 #'   \item{`"lba"`}{Linear Ballistic Accumulator model}
 #'   \item{`"hyper"`}{Hyperparameter model (single subject)}
-#'   \item{`"fastdm"`}{Decision Diffusion model}
-#'   \item{`"norm"`}{Old LBA type name, obsoleted}
-#'   \item{`"rd"`}{Old DDM type name, obsoleted}
+#'   \item{`"fastdm"`}{Diffusion Decision model}
 #' }
 #'
 #' @section Errors:
@@ -398,7 +409,7 @@ BuildModel <- function(
 #' \itemize{
 #'   \item S4 objects passed as `data` (suggesting reversed arguments)
 #'   \item Unsupported model types
-#'   \item Requests for norm model type (directs user to use LBA)
+#'   \item Requests for norm model type (directs user to use 'lba')
 #' }
 #'
 #' @examples
