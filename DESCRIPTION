@@ -2,10 +2,10 @@ Package: ggdmcModel
 Type: Package
 Title: Model Builders for 'ggdmc' Package
 Version: 0.2.8.9
-Date: 2025-06-27
+Date: 2025-07-08
 Authors@R: c(person(given = "Yi-Shin", family = "Lin", role = c("aut", "cre"), email = "yishinlin001@gmail.com"))
 Maintainer: Yi-Shin Lin <yishinlin001@gmail.com>
-Description: Provides tools for specifying and examining experimental design associated with cognitive models (e.g., diffusion decision models) for use with 'ggdmc' package. 
+Description: A set of tools for specifying and examining experimental designs associated with choice response time models (e.g., the Diffusion Decision Model). This package allows users to define how experimental factors influence one or more model parameters using R-style model specification syntax, while also checking the logical consistency of these associations. Additionally, it integrates with the 'ggdmc' package, which employs Differential Evolution Markov Chain Monte Carlo (DE-MCMC) sampling to optimise the model parameter.
 License: GPL (>= 2)  
 Imports: 
     Rcpp (>= 1.0.7),

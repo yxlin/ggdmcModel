@@ -22,7 +22,6 @@ test_that("\n== Associating the factor levels to the model parameter (simple cas
             testthat::expect_equal(expected_result, res)
         } else if (is.numeric(tc$expected)) {
             stop("unknown situation")
-            # expect_true(n_factor_cell == tc$expected)
         }
 
         invisible(res) # Return invisibly to avoid clutter

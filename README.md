@@ -1,12 +1,13 @@
-# ggdmcModel
-ggdmcModel provides tools for specifying and examining experimental design associated with cognitive models (e.g., diffusion decision models) for use with the 'ggdmc' package.
+'ggdmcModel' provides a set of tools for specifying and examining experimental designs associated with choice response time models (e.g., the Diffusion Decision Model). This package allows users to define how experimental factors influence one or more model parameters using R-style model specification syntax, while also checking the logical consistency of these associations. Additionally, it integrates with the 'ggdmc' package, which employs Differential Evolution Markov Chain Monte Carlo (DE-MCMC) sampling to optimise the model parameter.
+
 
 # Getting Started
+
 
 ```
 # Setting up a minimal LBA model
 pkg <- c("lbaModel", "ggdmcPrior")
-suppressPackageStartupMessages(tmp <- sapply(pkg, require, character.only = TRUE))
+sapply(pkg, require, character.only = TRUE)
 
 model <- BuildModel(
     p_map = list(A = "1", B = "1", t0 = "1", mean_v = "M", sd_v = "1", st0 = "1"),
@@ -40,10 +41,9 @@ slotNames(model)
 
 ```
 # Prerequisites
-See DESCRIPTION for prerequisites
+R (>= 3.5.0), Rcpp (>= 1.0.7), methods, RcppArmadillo (>= 0.10.7.5.0), ggdmcHeaders (0.2.9.1)
 
 # Installation
-From CRAN:
 
 ```
 install.packages("ggdmcModel")
