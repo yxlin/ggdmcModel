@@ -1,5 +1,12 @@
-'ggdmcModel' provides a set of tools for specifying and examining experimental designs associated with choice response time models (e.g., the Diffusion Decision Model). This package allows users to define how experimental factors influence one or more model parameters using R-style model specification syntax, while also checking the logical consistency of these associations. Additionally, it integrates with the 'ggdmc' package, which employs Differential Evolution Markov Chain Monte Carlo (DE-MCMC) sampling to optimise the model parameter.
-
+'ggdmcModel' provides a suite of tools for specifying and examining 
+experimental designs related to choice response time models (e.g.,
+the Diffusion Decision Model). This package allows users to
+define how experimental factors influence one or more model 
+parameters using R-style formula syntax, while also
+checking the logical consistency of these associations.
+Additionally, it integrates with the 'ggdmc' package, which 
+employs Differential Evolution Markov Chain Monte Carlo 
+(DE-MCMC) sampling to optimise model parameters. 
 
 # Getting Started
 

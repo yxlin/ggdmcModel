@@ -25,6 +25,13 @@ Matzke, D., (2019). Dynamic model of choice.
 \emph{Behavior Research Methods}.
 https://doi.org/10.3758/s13428-018-1067-y.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/yxlin/ggdmcModel}
+}
+
+}
 \author{
 Yi-Shin Lin <yishinlin001@gmail.com>
 }
