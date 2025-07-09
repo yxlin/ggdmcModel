@@ -38,36 +38,91 @@ constructed as \code{BuildModel} specified:
 }
 }
 \examples{
-\dontrun{
 # Build a model first
-model <- ggdmcModel::BuildModel(
-    p_map = list(a = "1", v = "M", z = "1", t0 = "1"),
+model <- BuildModel(
+    p_map = list(a = "1", v = "S", z = "1", d = "1", sz = "1", sv = "1", t0 = "1", 
+                 st0 = "1", s = "1"),
     match_map = list(M = list(s1 = "r1", s2 = "r2")),
     factors = list(S = c("s1", "s2")),
+    constants = c(d = 1, s = 1, sv = 1, sz = 0.5, st0 = 0),
     accumulators = c("r1", "r2"),
     type = "fastdm"
 )
 
-# Tabulate parameter mapping
-pop_mean <- c(a = 1, sz = 0.25, t0 = 0.15, v = 2.5, z = 0.38)
-param_table <- table_parameters(model, pop_mean)
-# $s1.r1
-#             r1   r2
-# a         1.00 1.00
-# d         0.00 0.00
-# precision 3.00 3.00
-# s         1.00 1.00
-# st0       0.00 0.00
-# sv        0.00 0.00
-# sz        0.25 0.25
-# t0        0.15 0.15
-# v         2.50 2.50
-# z         0.38 0.38
-# $s1.r2
-# ...
+# Tabulate a parameter vector to examine how the factor-dependent 
+# drift rate maps to the condition, s1 and s2.
+p_vector <- c(a = 1, sv = 0.2, sz = 0.25, t0 = 0.15, v.s1 = 4, v.s2 = 2, z = .38)
 
-# Print parameter map structure
-print_parameter_map(model)
-}
+pmat <- table_parameters(model, p_vector)
+# Transpose the result to get a more readable format
+result <- lapply(pmat, function(x) {
+    t(x)
+})
+
+print(result)
+# $s1.r1
+#    a d s st0 sv  sz  t0    v z
+# r1 1 1 1   0  1 0.5 0.2 0.25 4
+# r2 1 1 1   0  1 0.5 0.2 0.25 4
+# 
+# $s1.r2
+#    a d s st0 sv  sz  t0    v z
+# r1 1 1 1   0  1 0.5 0.2 0.25 4
+# r2 1 1 1   0  1 0.5 0.2 0.25 4
+# 
+# $s2.r1
+#    a d s st0 sv  sz  t0    v z
+# r1 1 1 1   0  1 0.5 0.2 0.15 4
+# r2 1 1 1   0  1 0.5 0.2 0.15 4
+# 
+# $s2.r2
+#    a d s st0 sv  sz  t0    v z
+# r1 1 1 1   0  1 0.5 0.2 0.15 4
+# r2 1 1 1   0  1 0.5 0.2 0.15 4
+
+# Print the parameter map 
+tmp <- print_parameter_map(model)
+# All parameters: a       d       s       st0     sv      sz      t0
+#                 v.s1    v.s2    z
+# Core parameters: a      d       s       st0     sv      sz      t0     
+#                  v       z
+# Free parameters: a      t0      v.s1    v.s2    z
+# Constant values: d: 1   s: 1    st0: 0  sv: 1   sz: 0.5
+
+# Parameter map: 
+# 
+# 1. When the second row is 1, it indicates that the parameter is fixed.
+# The internal machinery goes to the 'constant' to find its value. Note
+# the constant will be sorted alphabetically.
+# 2. When the second row is 0, it indicates that the parameter is free.
+# The internal machinery goes to the p_vector to find its value.
+# When doing MCMC sampling, a new p_vector is proposed by the sampler at 
+# every iteration.
+
+# Cell, s1.r1:
+# Acc 0: 0 0 1 2 3 4 1 2 4 <- C++ index 
+#        1 0 0 0 0 0 1 1 1 <- Whether the parameter is fixed
+# Acc 1: 0 0 1 2 3 4 1 2 4 
+#        1 0 0 0 0 0 1 1 1 
+# 
+# Cell, s1.r2:
+# Acc 0: 0 0 1 2 3 4 1 2 4 
+#        1 0 0 0 0 0 1 1 1 
+# Acc 1: 0 0 1 2 3 4 1 2 4 
+#        1 0 0 0 0 0 1 1 1 
+# 
+# Cell, s2.r1:
+# Acc 0: 0 0 1 2 3 4 1 3 4 
+#        1 0 0 0 0 0 1 1 1 
+# Acc 1: 0 0 1 2 3 4 1 3 4 
+#        1 0 0 0 0 0 1 1 1 
+# 
+# Cell, s2.r2:
+# Acc 0: 0 0 1 2 3 4 1 3 4 
+#        1 0 0 0 0 0 1 1 1 
+# Acc 1: 0 0 1 2 3 4 1 3 4 
+#        1 0 0 0 0 0 1 1 1 
+# 
+# Cell (ncell =  4): s1.r1        s1.r2   s2.r1   s2.r2
 
 }

@@ -34,7 +34,8 @@ true/false in the LBA model.
 \description{
 Binds experimental conditions to model parameters by combining parameter
 mappings and experimental factors, automatically handling the 'M' (
-matching) factor.
+matching) factor, specifically for the Linear Ballisitic Accumulation Model.
+\code{split_parameter_x_condition} separates bound parameters and conditions.
 }
 \details{
 This function:
@@ -42,15 +43,17 @@ This function:
   \item Converts R lists to C++ std::map containers for efficient lookup
   \item Processes the parameter mapping through `add_M()` to handle response
 mappings
-  \item Returns human-readable parameter-condition pairs  }
+  \item Returns human-readable parameter-condition pairs  
+}
 }
 \section{C++ Implementation}{
 
 The function uses:
 \itemize{
-  \item Rcpp::List input for R compatibility
-  \item std::map for efficient key-value lookups and name ordering
-  \item Automatic conversion between R and C++ data structures
+  \item Rcpp::List to take the 'list' from R and convert it to C++
+std::map for efficient key-value lookups
+  \item std::vector for storing the resulting parameter-condition pairs
+  \item Rcpp::CharacterVector for returning the result to R
 }
 }
 
@@ -62,6 +65,7 @@ parameter_M <-bind_condition2parameters_r(p_map, factors)
 # [1] "A"               "B"               "mean_v.s1.false" "mean_v.s1.true"
 # [5] "mean_v.s2.false" "mean_v.s2.true"  "sd_v"            "st0"
 # [9] "t0"
+
 result <- split_parameter_x_condition(parameter_M)
 # [[1]]
 # [1] "A"

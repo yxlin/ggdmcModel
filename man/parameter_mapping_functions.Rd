@@ -17,15 +17,17 @@ get_stimulus_level_r(parameter_map_r, factors_r, accumulators_r)
 get_factor_cells_r(parameter_map_r, factors_r, accumulators_r)
 }
 \arguments{
-\item{parameter_map_r}{A named list mapping parameters to conditions/factors.
-Example structure:
-\code{list(A = "1", B = "1", t0 = "1", mean_v = "M", sd_v = "1", st0 = "1")}
-Where:
-\itemize{
-  \item Numeric values ("1") indicate constant parameters
-  \item "M" indicates mapping to stimulus levels
-  \item Other strings indicate factor dependencies
-}}
+\item{parameter_map_r}{A named list mapping parameters to conditions and factors.
+       Example structure:
+       \code{list(A = "1", B = "1", t0 = "1", mean_v = "M", sd_v = "1", st0 = "1")}
+       Where:
+       \itemize{
+         \item '1' indicates this parameter is constant across conditions
+         \item "M" indicates this parameter is associated with the internal
+matching factor. It changes depends on whether it is a match (i.e., correct)
+response or a mismatched (i.e., incorrect) response.
+         \item Other strings indicate factor dependencies
+       }}
 
 \item{factors_r}{A named list of experimental factors and their levels.
 Example: \code{list(S = c("red", "blue"))}}
@@ -35,24 +37,26 @@ Example: \code{c("r1", "r2")}}
 }
 \value{
 \describe{
-  \item{is_core_parameter_x_condition}{Logical vector indicating which parameters are core (non-factor)}
-  \item{is_parameter_x_condition}{Logical vector indicating which parameters are factor-dependent}
-  \item{get_stimulus_level_r}{Character vector of stimulus levels for each accumulator}
+  \item{is_core_parameter_x_condition}{Logical vector indicating whether 
+core parameters (before associating with any conditions) are factor-dependent}
+  \item{is_parameter_x_condition}{Logical vector indicating whether 
+parameters are factor-dependent}
+  \item{get_stimulus_level_r}{Character vector of stimulus levels for each 
+accumulator}
   \item{get_factor_cells_r}{List of factor combinations for each accumulator}
 }
 }
 \description{
 A set of helper functions for processing parameter mappings across
 experimental conditions. These functions are used internally for
-model specification and simulation.
+building the model Boolean array.
 }
 \details{
 These functions work together to:
 \itemize{
-  \item Analyze parameter mappings across experimental conditions
-  \item Identify which parameters vary by condition
+  \item Analyse parameter mappings across experimental conditions
+  \item Identify which parameters vary by conditions
   \item Generate appropriate stimulus levels and factor combinations
-  \item Support model specification and simulation functions
 }
 }
 \examples{

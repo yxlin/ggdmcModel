@@ -14,8 +14,8 @@ vector mapping parameters to conditions. Names should correspond to
 \item{factors_r}{An Rcpp::List where each element is a character vector of
 factor levels. Names should correspond to factor names.}
 
-\item{responses_r}{A character vector (std::vector<std::string>) of response
-accumulator names.}
+\item{responses_r}{A character vector (std::vector<std::string>) of 
+response/accumulator names.}
 }
 \value{
 An Rcpp::List with two elements:
@@ -23,7 +23,7 @@ An Rcpp::List with two elements:
   \item \code{cell_names}: Character vector of all possible condition
 combinations
   \item \code{sortedFactors}: The processed factor structure used to
-  generate  cells
+  generate cells
 }
 }
 \description{
@@ -34,9 +34,10 @@ definitions. Returns both cell names and sorted factor definitions.
 \details{
 The function:
 \enumerate{
-  \item Converts R lists to C++ maps for efficient processing
+  \item Converts R lists to 'C++' maps for efficient processing
   \item Generates all condition combinations via Cartesian product
-  \item Handles special parameter mappings (like response accumulators)
+  \item Handles special parameter mappings (like mapping accumulators to 
+ conditions)
   \item Returns both cell names and the factor structure used
 }
 }

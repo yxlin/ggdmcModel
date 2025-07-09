@@ -371,43 +371,45 @@ BuildModel <- function(
 #' Build Data Model Instance
 #'
 #' Constructs a Data Model Instance (DMI) object from data and model
-#' specifications, handling different model types including
-#' Linear Ballistic Accumulator, Diffusion Decision and
-#' hyperparameters (i.e., common statiatical models).
+#' specifications, handling different model types including the
+#' Linear Ballistic Accumulator, the Diffusion Decision and
+#' hyperparameters. This process amounts to constructing a joint 
+#' distribution over conventional statistical models.
 #'
-#' @param data A dataset to be converted to a DMI object. It must be a data
-#'        frame.
+#' @param data A data fraame to be converted to a DMI object. 
 #' @param model A model specification object of class `model` containing type,
-#'        parameters, and other model-specific information.
+#'       parameters, and other model-specific information. This is typically
+#'       created using the `BuildModel` function.
 #'
-#' @return A `dmi` object or list of `dmi` objects (multiple subjects),
+#' @return A 'dmi' object or list of 'dmi' objects (multiple subjects),
 #' with structure:
 #' \itemize{
-#'   \item For LBA models: Returns a named list of `dmi` objects (one per subject)
-#'   \item For hyperparameter models: Returns a single `dmi` object
+#'   \item For choice RT models: Returns a named list of 'dmi' objects 
+#'         (one per subject)
+#'   \item For hyperparameter models: Returns a single 'dmi' object
 #' }
-#' Each `dmi` object contains:
+#' Each 'dmi' object contains:
 #' \itemize{
-#'   \item `model` - The model specification
-#'   \item `data` - The processed data (a list)
-#'   \item `node_1_index` - Index mapping for first nodes (LBA only)
-#'   \item `is_positive_drift` - Logical vector for drift directions. For LBA,
-#' each element corresponds to an accumulator. In the DDM, each element
-#' represents a condition. Additionally, in the DDM, the positive direction
-#' corresponds to a correct response (i.e., upper bound), and vice versa.
+#'   \item 'model' - The model specification
+#'   \item 'data' - The processed data (a list)
+#'   \item 'node_1_index` - Index mapping for first nodes (LBA only)
+#'   \item 'is_positive_drift` - A logical vector indicating drift 
+#' directions. For the LBA model, each element corresponds to an 
+#' accumulator. For the DDM, each element represents a condition. 
+#' In the DDM, a positive drift direction corresponds to a correct 
+#' response (i.e., the accumulator reaches the upper bound), and vice versa.
 #' }
 #'
 #' @section Model Types Supported:
 #' \describe{
 #'   \item{`"lba"`}{Linear Ballistic Accumulator model}
-#'   \item{`"hyper"`}{Hyperparameter model (single subject)}
+#'   \item{`"hyper"`}{Hyperparameter model}
 #'   \item{`"fastdm"`}{Diffusion Decision model}
 #' }
 #'
 #' @section Errors:
 #' Throws errors for:
 #' \itemize{
-#'   \item S4 objects passed as `data` (suggesting reversed arguments)
 #'   \item Unsupported model types
 #'   \item Requests for norm model type (directs user to use 'lba')
 #' }
@@ -427,7 +429,7 @@ BuildModel <- function(
 #' )
 #'
 #' # LBA model example
-#' model <- ggdmcModel::BuildModel(
+#' model <- BuildModel(
 #'     p_map = list(A = "1", B = "1", t0 = "1", mean_v = "M", sd_v = "1", st0 = "1"),
 #'     match_map = list(M = list(s1 = "r1", s2 = "r2")),
 #'     factors = list(S = c("s1", "s2")),
@@ -442,9 +444,9 @@ BuildModel <- function(
 #' dat <- lbaModel::simulate(sub_model, nsim = 256, parameter_vector = p_vector, n_subject = 1)
 #' hdat <- lbaModel::simulate(pop_model, nsim = 256, n_subject = 32)
 #'
-#' sub_dmis <- ggdmcModel::BuildDMI(dat, model)
-#' pop_dmis <- ggdmcModel::BuildDMI(hdat, model)
-#' hyper_dmi <- ggdmcModel::BuildDMI(hdat, hyper_model)
+#' sub_dmis <- BuildDMI(dat, model)
+#' pop_dmis <- BuildDMI(hdat, model)
+#' hyper_dmi <- BuildDMI(hdat, hyper_model)
 #' }
 #'
 #' @export

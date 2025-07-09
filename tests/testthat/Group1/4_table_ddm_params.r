@@ -15,11 +15,12 @@ pnames <- get_pnames(model)
 
 p_vector <- c(a = 1, sv = 0.2, sz = 0.25, t0 = 0.15, v.s1 = 4, v.s2 = 2, z = .38)
 
-# B, mean_v.true, t0
-tmp_parameters <- c(0.8367, 0.0324, 3.8186, 2.8186, 0.1)
-pmat <- table_parameters(model, tmp_parameters)
+
+
+pmat <- table_parameters(model, p_vector)
 result <- lapply(pmat, function(x) {
     t(x)
 })
 
 result
+tmp <- print_parameter_map(model)

@@ -248,23 +248,24 @@ int print_parameter_map(const Rcpp::S4 &model_r)
 //'        parameters.
 //' @param factors_r An Rcpp::List where each element is a character vector of
 //'        factor levels. Names should correspond to factor names.
-//' @param responses_r A character vector (std::vector<std::string>) of response
-//'        accumulator names.
+//' @param responses_r A character vector (std::vector<std::string>) of 
+//' response/accumulator names.
 //'
 //' @return An Rcpp::List with two elements:
 //' \itemize{
 //'   \item \code{cell_names}: Character vector of all possible condition
 //' combinations
 //'   \item \code{sortedFactors}: The processed factor structure used to
-//'   generate  cells
+//'   generate cells
 //' }
 //'
 //' @details
 //' The function:
 //' \enumerate{
-//'   \item Converts R lists to C++ maps for efficient processing
+//'   \item Converts R lists to 'C++' maps for efficient processing
 //'   \item Generates all condition combinations via Cartesian product
-//'   \item Handles special parameter mappings (like response accumulators)
+//'   \item Handles special parameter mappings (like mapping accumulators to 
+//'  conditions)
 //'   \item Returns both cell names and the factor structure used
 //' }
 //'
@@ -406,7 +407,8 @@ build_model_boolean_r(const Rcpp::List &parameter_map_r,
 //' @description
 //' Binds experimental conditions to model parameters by combining parameter
 //' mappings and experimental factors, automatically handling the 'M' (
-//' matching) factor.
+//' matching) factor, specifically for the Linear Ballisitic Accumulation Model.
+//' \code{split_parameter_x_condition} separates bound parameters and conditions.
 //'
 //' @param parameter_map_r A named list received from R (converted to
 //' Rcpp::List) where:
@@ -433,14 +435,16 @@ build_model_boolean_r(const Rcpp::List &parameter_map_r,
 //'   \item Converts R lists to C++ std::map containers for efficient lookup
 //'   \item Processes the parameter mapping through `add_M()` to handle response
 //' mappings
-//'   \item Returns human-readable parameter-condition pairs  }
+//'   \item Returns human-readable parameter-condition pairs  
+//' }
 //'
 //' @section C++ Implementation:
 //' The function uses:
 //' \itemize{
-//'   \item Rcpp::List input for R compatibility
-//'   \item std::map for efficient key-value lookups and name ordering
-//'   \item Automatic conversion between R and C++ data structures
+//'   \item Rcpp::List to take the 'list' from R and convert it to C++
+//' std::map for efficient key-value lookups
+//'   \item std::vector for storing the resulting parameter-condition pairs
+//'   \item Rcpp::CharacterVector for returning the result to R
 //' }
 //'
 //' @examples
@@ -451,6 +455,7 @@ build_model_boolean_r(const Rcpp::List &parameter_map_r,
 //' # [1] "A"               "B"               "mean_v.s1.false" "mean_v.s1.true"
 //' # [5] "mean_v.s2.false" "mean_v.s2.true"  "sd_v"            "st0"
 //' # [9] "t0"
+//'
 //' result <- split_parameter_x_condition(parameter_M)
 //' # [[1]]
 //' # [1] "A"
@@ -489,12 +494,13 @@ bind_condition2parameters_r(const Rcpp::List &parameter_map_r,
     return add_M(parameter_map, factors);
 }
 
-//' Get Node Index Mapping for First-Level Parameters
+//' Get Index Mapping for the Node 1 Accumulator
 //'
 //' @description
 //' Generates an integer matrix mapping experimental design cells to their
-//' corresponding first-level parameter indices, incorporating accumulator
-//' (response) information.
+//' corresponding indexes of the node 1 accumulator. The node 1 accumulator
+//' is the theoretical accumulator that reaches the threshold first. This 
+//' function is primarily used for the LBA model.
 //'
 //' @param parameter_map_r An Rcpp::List where each element is a character
 //' vector mapping parameters to conditions. Names should correspond to
@@ -514,18 +520,8 @@ bind_condition2parameters_r(const Rcpp::List &parameter_map_r,
 //' @details
 //' The function:
 //' \enumerate{
-//'   \item Converts R lists to C++ maps for efficient processing
-//'   \item Builds experimental design cells using \code{build_cell_names}
 //'   \item Computes node indices for each condition-response pair
 //'   \item Returns results as an R-compatible integer matrix
-//' }
-//'
-//' @section Typical Use Case:
-//' Primarily used for:
-//' \itemize{
-//'   \item Setting up hierarchical model structures
-//'   \item Linking experimental conditions to parameter nodes
-//'   \item Establishing response-specific parameter mappings
 //' }
 //'
 //' @examples

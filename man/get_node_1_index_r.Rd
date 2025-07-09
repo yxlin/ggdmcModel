@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{get_node_1_index_r}
 \alias{get_node_1_index_r}
-\title{Get Node Index Mapping for First-Level Parameters}
+\title{Get Index Mapping for the Node 1 Accumulator}
 \usage{
 get_node_1_index_r(parameter_map_r, factors_r, accumulators_r)
 }
@@ -27,28 +27,17 @@ combination.
 }
 \description{
 Generates an integer matrix mapping experimental design cells to their
-corresponding first-level parameter indices, incorporating accumulator
-(response) information.
+corresponding indexes of the node 1 accumulator. The node 1 accumulator
+is the theoretical accumulator that reaches the threshold first. This 
+function is primarily used for the LBA model.
 }
 \details{
 The function:
 \enumerate{
-  \item Converts R lists to C++ maps for efficient processing
-  \item Builds experimental design cells using \code{build_cell_names}
   \item Computes node indices for each condition-response pair
   \item Returns results as an R-compatible integer matrix
 }
 }
-\section{Typical Use Case}{
-
-Primarily used for:
-\itemize{
-  \item Setting up hierarchical model structures
-  \item Linking experimental conditions to parameter nodes
-  \item Establishing response-specific parameter mappings
-}
-}
-
 \examples{
 cat("Flexible stimulus name")
 p_map <- list(A = "1", B = "S", t0 = "E", mean_v = c("D", "M"),

@@ -35,7 +35,7 @@ setClass("model", slots = c(
 #' The S4 class for the Data Model Instance
 #'
 #' The class is to represent a data-model instance, joining a model object
-#' with a data list.
+#' with a data list. Note it is a data list, not a data frame.
 #'
 #' @slot model A model object
 #' @slot data A data list

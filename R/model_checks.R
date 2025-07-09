@@ -2,19 +2,21 @@
 #'
 #' A set of helper functions for processing parameter mappings across
 #' experimental conditions. These functions are used internally for
-#' model specification and simulation.
+#' building the model Boolean array.
 #'
 #' @name parameter_mapping_functions
 #' @aliases is_core_parameter_x_condition
 #'          is_parameter_x_condition get_stimulus_level_r get_factor_cells_r
 #'
-#' @param parameter_map_r A named list mapping parameters to conditions/factors.
+#' @param parameter_map_r A named list mapping parameters to conditions and factors.
 #'        Example structure:
 #'        \code{list(A = "1", B = "1", t0 = "1", mean_v = "M", sd_v = "1", st0 = "1")}
 #'        Where:
 #'        \itemize{
-#'          \item Numeric values ("1") indicate constant parameters
-#'          \item "M" indicates mapping to stimulus levels
+#'          \item '1' indicates this parameter is constant across conditions
+#'          \item "M" indicates this parameter is associated with the internal
+#' matching factor. It changes depends on whether it is a match (i.e., correct)
+#' response or a mismatched (i.e., incorrect) response.
 #'          \item Other strings indicate factor dependencies
 #'        }
 #' @param factors_r A named list of experimental factors and their levels.
@@ -24,19 +26,21 @@
 #'
 #' @return
 #' \describe{
-#'   \item{is_core_parameter_x_condition}{Logical vector indicating which parameters are core (non-factor)}
-#'   \item{is_parameter_x_condition}{Logical vector indicating which parameters are factor-dependent}
-#'   \item{get_stimulus_level_r}{Character vector of stimulus levels for each accumulator}
+#'   \item{is_core_parameter_x_condition}{Logical vector indicating whether 
+#' core parameters (before associating with any conditions) are factor-dependent}
+#'   \item{is_parameter_x_condition}{Logical vector indicating whether 
+#' parameters are factor-dependent}
+#'   \item{get_stimulus_level_r}{Character vector of stimulus levels for each 
+#' accumulator}
 #'   \item{get_factor_cells_r}{List of factor combinations for each accumulator}
 #' }
 #'
 #' @details
 #' These functions work together to:
 #' \itemize{
-#'   \item Analyze parameter mappings across experimental conditions
-#'   \item Identify which parameters vary by condition
+#'   \item Analyse parameter mappings across experimental conditions
+#'   \item Identify which parameters vary by conditions
 #'   \item Generate appropriate stimulus levels and factor combinations
-#'   \item Support model specification and simulation functions
 #' }
 #'
 #' @examples
@@ -83,37 +87,92 @@ NULL
 #' }
 #'
 #' @examples
-#' \dontrun{
 #' # Build a model first
-#' model <- ggdmcModel::BuildModel(
-#'     p_map = list(a = "1", v = "M", z = "1", t0 = "1"),
+#' model <- BuildModel(
+#'     p_map = list(a = "1", v = "S", z = "1", d = "1", sz = "1", sv = "1", t0 = "1", 
+#'                  st0 = "1", s = "1"),
 #'     match_map = list(M = list(s1 = "r1", s2 = "r2")),
 #'     factors = list(S = c("s1", "s2")),
+#'     constants = c(d = 1, s = 1, sv = 1, sz = 0.5, st0 = 0),
 #'     accumulators = c("r1", "r2"),
 #'     type = "fastdm"
 #' )
-#'
-#' # Tabulate parameter mapping
-#' pop_mean <- c(a = 1, sz = 0.25, t0 = 0.15, v = 2.5, z = 0.38)
-#' param_table <- table_parameters(model, pop_mean)
+#' 
+#' # Tabulate a parameter vector to examine how the factor-dependent 
+#' # drift rate maps to the condition, s1 and s2.
+#' p_vector <- c(a = 1, sv = 0.2, sz = 0.25, t0 = 0.15, v.s1 = 4, v.s2 = 2, z = .38)
+#' 
+#' pmat <- table_parameters(model, p_vector)
+#' # Transpose the result to get a more readable format
+#' result <- lapply(pmat, function(x) {
+#'     t(x)
+#' })
+#' 
+#' print(result)
 #' # $s1.r1
-#' #             r1   r2
-#' # a         1.00 1.00
-#' # d         0.00 0.00
-#' # precision 3.00 3.00
-#' # s         1.00 1.00
-#' # st0       0.00 0.00
-#' # sv        0.00 0.00
-#' # sz        0.25 0.25
-#' # t0        0.15 0.15
-#' # v         2.50 2.50
-#' # z         0.38 0.38
+#' #    a d s st0 sv  sz  t0    v z
+#' # r1 1 1 1   0  1 0.5 0.2 0.25 4
+#' # r2 1 1 1   0  1 0.5 0.2 0.25 4
+#' # 
 #' # $s1.r2
-#' # ...
+#' #    a d s st0 sv  sz  t0    v z
+#' # r1 1 1 1   0  1 0.5 0.2 0.25 4
+#' # r2 1 1 1   0  1 0.5 0.2 0.25 4
+#' # 
+#' # $s2.r1
+#' #    a d s st0 sv  sz  t0    v z
+#' # r1 1 1 1   0  1 0.5 0.2 0.15 4
+#' # r2 1 1 1   0  1 0.5 0.2 0.15 4
+#' # 
+#' # $s2.r2
+#' #    a d s st0 sv  sz  t0    v z
+#' # r1 1 1 1   0  1 0.5 0.2 0.15 4
+#' # r2 1 1 1   0  1 0.5 0.2 0.15 4
 #'
-#' # Print parameter map structure
-#' print_parameter_map(model)
-#' }
+#' # Print the parameter map 
+#' tmp <- print_parameter_map(model)
+#' # All parameters: a       d       s       st0     sv      sz      t0
+#' #                 v.s1    v.s2    z
+#' # Core parameters: a      d       s       st0     sv      sz      t0     
+#' #                  v       z
+#' # Free parameters: a      t0      v.s1    v.s2    z
+#' # Constant values: d: 1   s: 1    st0: 0  sv: 1   sz: 0.5
+#' 
+#' # Parameter map: 
+#' # 
+#' # 1. When the second row is 1, it indicates that the parameter is fixed.
+#' # The internal machinery goes to the 'constant' to find its value. Note
+#' # the constant will be sorted alphabetically.
+#' # 2. When the second row is 0, it indicates that the parameter is free.
+#' # The internal machinery goes to the p_vector to find its value.
+#' # When doing MCMC sampling, a new p_vector is proposed by the sampler at 
+#' # every iteration.
+#' 
+#' # Cell, s1.r1:
+#' # Acc 0: 0 0 1 2 3 4 1 2 4 <- C++ index 
+#' #        1 0 0 0 0 0 1 1 1 <- Whether the parameter is fixed
+#' # Acc 1: 0 0 1 2 3 4 1 2 4 
+#' #        1 0 0 0 0 0 1 1 1 
+#' # 
+#' # Cell, s1.r2:
+#' # Acc 0: 0 0 1 2 3 4 1 2 4 
+#' #        1 0 0 0 0 0 1 1 1 
+#' # Acc 1: 0 0 1 2 3 4 1 2 4 
+#' #        1 0 0 0 0 0 1 1 1 
+#' # 
+#' # Cell, s2.r1:
+#' # Acc 0: 0 0 1 2 3 4 1 3 4 
+#' #        1 0 0 0 0 0 1 1 1 
+#' # Acc 1: 0 0 1 2 3 4 1 3 4 
+#' #        1 0 0 0 0 0 1 1 1 
+#' # 
+#' # Cell, s2.r2:
+#' # Acc 0: 0 0 1 2 3 4 1 3 4 
+#' #        1 0 0 0 0 0 1 1 1 
+#' # Acc 1: 0 0 1 2 3 4 1 3 4 
+#' #        1 0 0 0 0 0 1 1 1 
+#' # 
+#' # Cell (ncell =  4): s1.r1        s1.r2   s2.r1   s2.r2
 #'
 #' @rdname model_parameter_utils
 NULL
