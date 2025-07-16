@@ -1,28 +1,28 @@
 #' Model Builders for 'ggdmc' Package
 #'
-#' A suite of tools for specifying and examining experimental 
-#' designs related to choice response time models (e.g., 
+#' A suite of tools for specifying and examining experimental
+#' designs related to choice response time models (e.g.,
 #' the Diffusion Decision Model). This package allows users to
-#' define how experimental factors influence one or more model 
+#' define how experimental factors influence one or more model
 #' parameters using R-style formula syntax, while also
 #' checking the logical consistency of these associations.
-#' Additionally, it integrates with the 'ggdmc' package, which 
-#' employs Differential Evolution Markov Chain Monte Carlo 
-#' (DE-MCMC) sampling to optimise model parameters. For 
-#' further details on the model-building approach, see 
-#' Heathcote, Lin, Reynolds, Strickland, Gretton, and 
+#' Additionally, it integrates with the 'ggdmc' package, which
+#' employs Differential Evolution Markov Chain Monte Carlo
+#' (DE-MCMC) sampling to optimise model parameters. For
+#' further details on the model-building approach, see
+#' Heathcote, Lin, Reynolds, Strickland, Gretton, and
 #' Matzke (2019) <doi:10.3758/s13428-018-1067-y>.
 #'
 #' @keywords package
 #'
 #' @name ggdmcModel
 #' @keywords internal
-#' @author  Yi-Shin Lin <yishinlin001@gmail.com> 
+#' @author  Yi-Shin Lin <yishinlin001@gmail.com>
 #' @references
 #' Heathcote, A., Lin, Y.-S., Reynolds, A., Strickland, L., Gretton, M. &
 #' Matzke, D., (2019). Dynamic model of choice.
 #' \emph{Behavior Research Methods}.
-#' https://doi.org/10.3758/s13428-018-1067-y. 
+#' https://doi.org/10.3758/s13428-018-1067-y.
 #'
 #' @importFrom Rcpp evalCpp
 #' @useDynLib ggdmcModel
@@ -49,19 +49,15 @@ NULL
 
     # convert match.map$M to accumulators and check
     if (is.numeric(unlist(match_map$M))) {
-        cat("You seems to be using numbers representing response names. We try to guess what you meant.")
+        message("You seems to be using numeric (i.e., numbers) representing response names. We try to guess what you meant.")
         match_map$M <- lapply(match_map$M, function(x) {
             accumulators[x]
         })
     }
 
     if (!all(unlist(match_map$M) %in% accumulators)) {
-        cat("accumulators:\n")
-        print(accumulators)
-
-        cat("unlist match_map$M:\n")
-        print(unlist(match_map$M))
-
+        message("accumulators:\n", paste(accumulators, collapse = "\t"))
+        message("unlist match_map$M:\n", paste(unlist(match_map$M), collapse = "\t"))
         stop("match_map$M has index or name not in response names")
     }
     if (!(all(sort(accumulators) == sort(unique(unlist(match_map$M)))))) {
@@ -94,35 +90,36 @@ NULL
     invisible(NULL)
 }
 
+.print_names <- function(pnames, what_info = " parameters ", max_print = 10, print_method = c("head", "sample", "all")) {
+    method <- match.arg(print_method)
+    n <- length(pnames)
 
-.print_names <- function(pnames, what_info = " parameters (", max_print = 10, method = c("head", "sample", "all")) {
-    method <- match.arg(method)
-
-    if (length(pnames) > max_print) {
+    if (n > max_print) {
         if (method == "head") {
             # Print first 'max_print' and indicate truncation
             truncated <- pnames[1:max_print]
 
-            message("First ", max_print, " of ", length(pnames), what_info, "use method = 'sample' or 'all' for more):")
+            message("First ", max_print, " of ", n, what_info, " (use print_method = 'sample' or 'all' for more):")
             message(paste(truncated, collapse = "\t"))
-            message("... (", length(pnames) - max_print, " more omitted)")
+            message("... (", n - max_print, " more omitted)")
         } else if (method == "sample") {
             # Print a random sample
             sampled <- sample(pnames, size = max_print)
-            message("Random sample of ", max_print, " parameter names:")
+            message("Random sample of ", max_print, what_info)
             message(paste(sampled, collapse = "\t"))
-            message("... (total: ", length(pnames), ")")
+            message("... (total: ", n, ")")
         } else {
-            # Print all (paginated if needed)
-            message("All ", length(pnames), " parameter names:")
-            print(pnames) # Uses R's default pagination
+            message("All ", n, " parameter names:")
+            message(paste(pnames, collapse = "\t"))
         }
     } else {
         # Short list: print everything
-        message(what_info, length(pnames), " total):")
+        message(what_info, n, " ina total:")
         message(paste(pnames, collapse = "\t"))
     }
 }
+
+
 
 .check_factors <- function(factors) {
     keywords <- c("1", "s", "R", "M")
@@ -243,17 +240,6 @@ NULL
         sequence <- order(names(rt_list))
         data_list[[subj_name]] <- rt_list[sequence]
 
-
-        # Split C values by the same combinations (for tracking)
-        # c_values <- split(subj_df$C, conditions)
-
-        # Get unique C value for each condition (assuming all values are same per condition)
-        # c_unique <- lapply(c_values, function(x) x[1])
-
-        # sequence <- order(names(rt_list))
-
-        # data_list[[subj_name]] <- rt_list[sequence]
-        # C_list[[subj_name]] <- c_unique[sequence]
     }
 
     if (has_C) {
@@ -262,28 +248,46 @@ NULL
         return(list(data = data_list))
     }
 
-    # list(data = data_list, c_values = C_list)
 }
+
+
 
 #' Build a model object
 #'
 #' The function performs a series of syntax checks to ensure the user enters
 #' strings/values conforming the C++ internal setting.
 #'
-#' @param p_map descibes the association between the parameter and the
+#' @param p_map Descibes the association between the parameter and the
 #' experimental factor.
-#' @param accumulators specifies the response names and its levels.
-#' @param factors specifies a list of factors and their levels/conditions.
-#' @param match_map describes which the stimulus condition matches which response
-#' level, resulting in a correct or an incorrect response.
-#' @param constants the argument allows the user to decide which parameter is set to a
-#' constant value.
-#' @param type the model type defined in the package, "fastdm", "hyper", or "lba".
-#' @param verbose print design information
+#' @param accumulators Specifies the response names and their levels.
+#' @param factors Specifies a list of factors along with their levels or conditions.
+#' @param match_map Maps stimulus conditions to response levels, indicating correctness.
+#' @param constants Allows the user to fix certain model parameters at constant values.
+#' @param type The model type used in the package, "fastdm", "hyper", or "lba".
+#' @param print_method a string indicating how you want the function to print model 
+#' information. \itemize{
+#' \item \code{head} prints the first few elements.
+#' \item \code{sample} samples and prints a handful of elements.
+#' \item \code{all} prints all elements.
+#' }. Default to \code{head} method.
+#' @param verbose Logical; if \code{TRUE}, prints design information.
+#' @return A S4 'model' class object containing the following slots:
+#' \itemize{
+#'      \item \code{parameter_map} Stores the assocation between model parameters and the factors.
+#'      \item \code{accumulators} Names of internal accumulators or manifested responses.
+#'      \item \code{factors} Names of the factors.
+#'      \item \code{match_map} Mapping between stimuli and responses.
+#'      \item \code{constants} Specifies which model parameters are fixed to constant values.
+#'      \item \code{cell_names} Names of the experimental conditions aora a cells.
+#'      \item \code{parameter_x_condition_names} Parameter names after associated with conditions.
+#'      \item \code{model_boolean} A 3D Boolean array guiding the allocation of model parameters to conditions.
+#'      \item \code{pnames} Names of the model parameter associated with conditons.
+#'      \item \code{npar} Numbers of parameters.
+#'      \item \code{type} a string indicating the model type.
+#' }
 #' @examples
 #' ## A diffusion decision model
-#' \dontrun{
-#' model <- ggdmcModel::BuildModel(
+#' model <- BuildModel(
 #'     p_map = list(
 #'         a = c("S", "COLOUR"), v = c("NOISE"), z = "1", d = "1", sz = "1", sv = "1",
 #'         t0 = "1", st0 = "1", s = "1", precision = "1"
@@ -297,10 +301,9 @@ NULL
 #'     accumulators = c("z_key", "x_key"),
 #'     type = "fastdm"
 #' )
-#' }
-#' \dontrun{
+#'
 #' ## A LBA model
-#' model <- ggdmcModel::BuildModel(
+#' model <- BuildModel(
 #'     p_map = list(
 #'         A = "1", B = c("S", "COLOR"), t0 = "1", mean_v = c("NOISE", "M"),
 #'         sd_v = "M", st0 = "1"
@@ -315,7 +318,6 @@ NULL
 #'     accumulators = c("z_key", "x_key"),
 #'     type = "lba"
 #' )
-#' }
 #'
 #' @importFrom methods new
 #' @export
@@ -326,7 +328,9 @@ BuildModel <- function(
     match_map = list(M = list("s1" = "r1", "s2" = "r2")),
     constants = c(sd_v = 1, st0 = 0),
     type = "lba",
-    verbose = TRUE) {
+    print_method =  "head",
+    verbose = TRUE) 
+{
     .check_factors(factors)
     .check_p_map(p_map)
     .check_accumulators(accumulators)
@@ -356,9 +360,8 @@ BuildModel <- function(
     out@npar <- length(out@pnames)
 
     if (verbose) {
-        .print_names(out@pnames)
-        message(paste("", collapse = "\n"))
-        .print_names(out@cell_names, " cell names (")
+        .print_names(out@pnames, print_method = print_method)
+        .print_names(out@cell_names, what_info = " cell names ", print_method = print_method)
     }
 
     out
@@ -366,21 +369,21 @@ BuildModel <- function(
 
 #' Build Data Model Instance
 #'
-#' Constructs a Data Model Instance (DMI) object from data and model
-#' specifications, handling different model types including the
-#' Linear Ballistic Accumulator, the Diffusion Decision and
-#' hyperparameters. This process amounts to constructing a joint 
-#' distribution over conventional statistical models.
+#' Constructs a Data Model Instance (DMI) from data and model
+#' specifications. The DMI builder can handle different model types including
+#' the Linear Ballistic Accumulator, the Diffusion Decision and hyperparameter.
+#' The process of building a 'hyperparameter' DMI amounts to constructing a
+#' joint distribution over conventional statistical models.
 #'
-#' @param data A data fraame to be converted to a DMI object. 
-#' @param model A model specification object of class `model` containing type,
+#' @param data A data frame to be converted to a DMI object.
+#' @param model A model specification object of class \code{model} containing
 #'       parameters, and other model-specific information. This is typically
 #'       created using the `BuildModel` function.
 #'
 #' @return A 'dmi' object or list of 'dmi' objects (multiple subjects),
 #' with structure:
 #' \itemize{
-#'   \item For choice RT models: Returns a named list of 'dmi' objects 
+#'   \item For choice RT models: Returns a named list of 'dmi' objects
 #'         (one per subject)
 #'   \item For hyperparameter models: Returns a single 'dmi' object
 #' }
@@ -389,10 +392,10 @@ BuildModel <- function(
 #'   \item 'model' - The model specification
 #'   \item 'data' - The processed data (a list)
 #'   \item 'node_1_index` - Index mapping for first nodes (LBA only)
-#'   \item 'is_positive_drift` - A logical vector indicating drift 
-#' directions. For the LBA model, each element corresponds to an 
-#' accumulator. For the DDM, each element represents a condition. 
-#' In the DDM, a positive drift direction corresponds to a correct 
+#'   \item 'is_positive_drift` - A logical vector indicating drift
+#' directions. For the LBA model, each element corresponds to an
+#' accumulator. For the DDM, each element represents a condition.
+#' In the DDM, a positive drift direction corresponds to a correct
 #' response (i.e., the accumulator reaches the upper bound), and vice versa.
 #' }
 #'
@@ -403,16 +406,7 @@ BuildModel <- function(
 #'   \item{`"fastdm"`}{Diffusion Decision model}
 #' }
 #'
-#' @section Errors:
-#' Throws errors for:
-#' \itemize{
-#'   \item Unsupported model types
-#'   \item Requests for norm model type (directs user to use 'lba')
-#' }
-#'
 #' @examples
-#' \dontrun{
-#'
 #' # Hyperparameter model example
 #' hyper_model <- BuildModel(
 #'     p_map = list(A = "1", B = "1", mean_v = "M", sd_v = "1", st0 = "1", t0 = "1"),
@@ -433,17 +427,16 @@ BuildModel <- function(
 #'     accumulators = c("r1", "r2"),
 #'     type = "lba"
 #' )
-#'
-#' sub_model <- lbaModel::setLBA(model)
-#' pop_model <- lbaModel::setLBA(model, population_distribution = pop_dist)
-#' p_vector <- c(A = .75, B = 1.25, mean_v.false = 1.5, mean_v.true = 2.5, t0 = .15)
-#' dat <- lbaModel::simulate(sub_model, nsim = 256, parameter_vector = p_vector, n_subject = 1)
-#' hdat <- lbaModel::simulate(pop_model, nsim = 256, n_subject = 32)
+#' 
+#' dat <- data.frame(
+#'   RT = c(0.7802726, 0.7890208, 1.3222672, 0.8376305, 0.7144698),
+#'   R  = c("r1", "r1", "r2", "r1", "r1"),
+#'   s  = c(1, 1, 1, 1, 1),
+#'   S  = c("s1", "s1", "s1", "s1", "s1"),
+#'   stringsAsFactors = FALSE
+#' )
 #'
 #' sub_dmis <- BuildDMI(dat, model)
-#' pop_dmis <- BuildDMI(hdat, model)
-#' hyper_dmi <- BuildDMI(hdat, hyper_model)
-#' }
 #'
 #' @export
 BuildDMI <- function(data, model) {

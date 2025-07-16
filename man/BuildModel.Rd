@@ -11,26 +11,48 @@ BuildModel(
   match_map = list(M = list(s1 = "r1", s2 = "r2")),
   constants = c(sd_v = 1, st0 = 0),
   type = "lba",
+  print_method = "head",
   verbose = TRUE
 )
 }
 \arguments{
-\item{p_map}{descibes the association between the parameter and the
+\item{p_map}{Descibes the association between the parameter and the
 experimental factor.}
 
-\item{accumulators}{specifies the response names and its levels.}
+\item{accumulators}{Specifies the response names and their levels.}
 
-\item{factors}{specifies a list of factors and their levels/conditions.}
+\item{factors}{Specifies a list of factors along with their levels or conditions.}
 
-\item{match_map}{describes which the stimulus condition matches which response
-level, resulting in a correct or an incorrect response.}
+\item{match_map}{Maps stimulus conditions to response levels, indicating correctness.}
 
-\item{constants}{the argument allows the user to decide which parameter is set to a
-constant value.}
+\item{constants}{Allows the user to fix certain model parameters at constant values.}
 
-\item{type}{the model type defined in the package, "fastdm", "hyper", or "lba".}
+\item{type}{The model type used in the package, "fastdm", "hyper", or "lba".}
 
-\item{verbose}{print design information}
+\item{print_method}{a string indicating how you want the function to print model 
+information. \itemize{
+\item \code{head} prints the first few elements.
+\item \code{sample} samples and prints a handful of elements.
+\item \code{all} prints all elements.
+}. Default to \code{head} method.}
+
+\item{verbose}{Logical; if \code{TRUE}, prints design information.}
+}
+\value{
+A S4 'model' class object containing the following slots:
+\itemize{
+     \item \code{parameter_map} Stores the assocation between model parameters and the factors.
+     \item \code{accumulators} Names of internal accumulators or manifested responses.
+     \item \code{factors} Names of the factors.
+     \item \code{match_map} Mapping between stimuli and responses.
+     \item \code{constants} Specifies which model parameters are fixed to constant values.
+     \item \code{cell_names} Names of the experimental conditions aora a cells.
+     \item \code{parameter_x_condition_names} Parameter names after associated with conditions.
+     \item \code{model_boolean} A 3D Boolean array guiding the allocation of model parameters to conditions.
+     \item \code{pnames} Names of the model parameter associated with conditons.
+     \item \code{npar} Numbers of parameters.
+     \item \code{type} a string indicating the model type.
+}
 }
 \description{
 The function performs a series of syntax checks to ensure the user enters
@@ -38,8 +60,7 @@ strings/values conforming the C++ internal setting.
 }
 \examples{
 ## A diffusion decision model
-\dontrun{
-model <- ggdmcModel::BuildModel(
+model <- BuildModel(
     p_map = list(
         a = c("S", "COLOUR"), v = c("NOISE"), z = "1", d = "1", sz = "1", sv = "1",
         t0 = "1", st0 = "1", s = "1", precision = "1"
@@ -53,10 +74,9 @@ model <- ggdmcModel::BuildModel(
     accumulators = c("z_key", "x_key"),
     type = "fastdm"
 )
-}
-\dontrun{
+
 ## A LBA model
-model <- ggdmcModel::BuildModel(
+model <- BuildModel(
     p_map = list(
         A = "1", B = c("S", "COLOR"), t0 = "1", mean_v = c("NOISE", "M"),
         sd_v = "M", st0 = "1"
@@ -71,6 +91,5 @@ model <- ggdmcModel::BuildModel(
     accumulators = c("z_key", "x_key"),
     type = "lba"
 )
-}
 
 }

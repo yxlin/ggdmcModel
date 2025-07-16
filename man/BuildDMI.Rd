@@ -7,9 +7,9 @@
 BuildDMI(data, model)
 }
 \arguments{
-\item{data}{A data fraame to be converted to a DMI object.}
+\item{data}{A data frame to be converted to a DMI object.}
 
-\item{model}{A model specification object of class `model` containing type,
+\item{model}{A model specification object of class \code{model} containing
 parameters, and other model-specific information. This is typically
 created using the `BuildModel` function.}
 }
@@ -17,7 +17,7 @@ created using the `BuildModel` function.}
 A 'dmi' object or list of 'dmi' objects (multiple subjects),
 with structure:
 \itemize{
-  \item For choice RT models: Returns a named list of 'dmi' objects 
+  \item For choice RT models: Returns a named list of 'dmi' objects
         (one per subject)
   \item For hyperparameter models: Returns a single 'dmi' object
 }
@@ -26,19 +26,19 @@ Each 'dmi' object contains:
   \item 'model' - The model specification
   \item 'data' - The processed data (a list)
   \item 'node_1_index` - Index mapping for first nodes (LBA only)
-  \item 'is_positive_drift` - A logical vector indicating drift 
-directions. For the LBA model, each element corresponds to an 
-accumulator. For the DDM, each element represents a condition. 
-In the DDM, a positive drift direction corresponds to a correct 
+  \item 'is_positive_drift` - A logical vector indicating drift
+directions. For the LBA model, each element corresponds to an
+accumulator. For the DDM, each element represents a condition.
+In the DDM, a positive drift direction corresponds to a correct
 response (i.e., the accumulator reaches the upper bound), and vice versa.
 }
 }
 \description{
-Constructs a Data Model Instance (DMI) object from data and model
-specifications, handling different model types including the
-Linear Ballistic Accumulator, the Diffusion Decision and
-hyperparameters. This process amounts to constructing a joint 
-distribution over conventional statistical models.
+Constructs a Data Model Instance (DMI) from data and model
+specifications. The DMI builder can handle different model types including
+the Linear Ballistic Accumulator, the Diffusion Decision and hyperparameter.
+The process of building a 'hyperparameter' DMI amounts to constructing a
+joint distribution over conventional statistical models.
 }
 \section{Model Types Supported}{
 
@@ -49,18 +49,7 @@ distribution over conventional statistical models.
 }
 }
 
-\section{Errors}{
-
-Throws errors for:
-\itemize{
-  \item Unsupported model types
-  \item Requests for norm model type (directs user to use 'lba')
-}
-}
-
 \examples{
-\dontrun{
-
 # Hyperparameter model example
 hyper_model <- BuildModel(
     p_map = list(A = "1", B = "1", mean_v = "M", sd_v = "1", st0 = "1", t0 = "1"),
@@ -82,15 +71,14 @@ model <- BuildModel(
     type = "lba"
 )
 
-sub_model <- lbaModel::setLBA(model)
-pop_model <- lbaModel::setLBA(model, population_distribution = pop_dist)
-p_vector <- c(A = .75, B = 1.25, mean_v.false = 1.5, mean_v.true = 2.5, t0 = .15)
-dat <- lbaModel::simulate(sub_model, nsim = 256, parameter_vector = p_vector, n_subject = 1)
-hdat <- lbaModel::simulate(pop_model, nsim = 256, n_subject = 32)
+dat <- data.frame(
+  RT = c(0.7802726, 0.7890208, 1.3222672, 0.8376305, 0.7144698),
+  R  = c("r1", "r1", "r2", "r1", "r1"),
+  s  = c(1, 1, 1, 1, 1),
+  S  = c("s1", "s1", "s1", "s1", "s1"),
+  stringsAsFactors = FALSE
+)
 
 sub_dmis <- BuildDMI(dat, model)
-pop_dmis <- BuildDMI(hdat, model)
-hyper_dmi <- BuildDMI(hdat, hyper_model)
-}
 
 }

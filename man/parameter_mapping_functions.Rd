@@ -60,7 +60,6 @@ These functions work together to:
 }
 }
 \examples{
-\dontrun{
 p_map <- list(A = "1", B = "1", t0 = "1", mean_v = "M", sd_v = "1", st0 = "1")
 factors <- list(S = c("red", "blue"))
 accumulators <- c("r1", "r2")
@@ -70,5 +69,4 @@ is_core_parameter_x_condition(p_map, factors)
 
 # Get stimulus levels for each accumulator
 get_stimulus_level_r(p_map, factors, accumulators)
-}
 }

@@ -6,17 +6,17 @@
 \alias{ggdmcModel}
 \title{Model Builders for 'ggdmc' Package}
 \description{
-A suite of tools for specifying and examining experimental 
-designs related to choice response time models (e.g., 
+A suite of tools for specifying and examining experimental
+designs related to choice response time models (e.g.,
 the Diffusion Decision Model). This package allows users to
-define how experimental factors influence one or more model 
+define how experimental factors influence one or more model
 parameters using R-style formula syntax, while also
 checking the logical consistency of these associations.
-Additionally, it integrates with the 'ggdmc' package, which 
-employs Differential Evolution Markov Chain Monte Carlo 
-(DE-MCMC) sampling to optimise model parameters. For 
-further details on the model-building approach, see 
-Heathcote, Lin, Reynolds, Strickland, Gretton, and 
+Additionally, it integrates with the 'ggdmc' package, which
+employs Differential Evolution Markov Chain Monte Carlo
+(DE-MCMC) sampling to optimise model parameters. For
+further details on the model-building approach, see
+Heathcote, Lin, Reynolds, Strickland, Gretton, and
 Matzke (2019) <doi:10.3758/s13428-018-1067-y>.
 }
 \references{

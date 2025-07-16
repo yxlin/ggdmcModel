@@ -44,7 +44,6 @@
 #' }
 #'
 #' @examples
-#' \dontrun{
 #' p_map <- list(A = "1", B = "1", t0 = "1", mean_v = "M", sd_v = "1", st0 = "1")
 #' factors <- list(S = c("red", "blue"))
 #' accumulators <- c("r1", "r2")
@@ -54,7 +53,6 @@
 #'
 #' # Get stimulus levels for each accumulator
 #' get_stimulus_level_r(p_map, factors, accumulators)
-#' }
 NULL
 
 #' Tabulate Model Parameter
