@@ -1,4 +1,4 @@
-'ggdmcModel' provides a suite of tools for specifying and examining 
+The package provides a suite of tools for specifying and examining 
 experimental designs related to choice response time models (e.g.,
 the Diffusion Decision Model). This package allows users to
 define how experimental factors influence one or more model 
@@ -9,7 +9,6 @@ employs Differential Evolution Markov Chain Monte Carlo
 (DE-MCMC) sampling to optimise model parameters. 
 
 # Getting Started
-
 
 ```
 # Setting up a minimal LBA model
@@ -48,8 +47,7 @@ slotNames(model)
 
 ```
 
-The following code showed how the model build allocates a parameter vecotr with two different drift rates corresponding to the two conditions from a stimulus factor, 'S' to the DDM drift rate parameter, 
-
+The following code showed how the 'BuildModel' allocates a parameter vector with two different drift rates corresponding to the two conditions from a stimulus factor, 'S' to the DDM drift rate parameter, 
 
 ```
 pkg <- c("ggdmcModel")
@@ -72,6 +70,7 @@ p_vector <- c(a = 1, sv = 0.2, sz = 0.25, t0 = 0.15, v.s1 = 4, v.s2 = 2, z = .38
 # B, mean_v.true, t0
 tmp_parameters <- c(0.8367, 0.0324, 3.8186, 2.8186, 0.1)
 pmat <- table_parameters(model, tmp_parameters)
+
 result <- lapply(pmat, function(x) {
     t(x)
 })
