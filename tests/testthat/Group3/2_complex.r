@@ -1,8 +1,8 @@
 # q(save = "no")
 cat("\n\n-------------------- Testing v models --------------------")
 # rm(list = ls())
-# pkg <- c("ggdmcModel")
-# suppressPackageStartupMessages(tmp <- sapply(pkg, require, character.only = TRUE))
+#  pkg <- c("ggdmcModel")
+#  suppressPackageStartupMessages(tmp <- sapply(pkg, require, character.only = TRUE))
 cat("\nWorking directory: ", getwd(), "\n")
 
 # Model 1 - 3 parameters
@@ -14,7 +14,7 @@ model <- BuildModel(
     accumulators = c("r1", "r2"),
     type = "lba"
 )
-
+model@model
 
 # Model 2
 model <- BuildModel(

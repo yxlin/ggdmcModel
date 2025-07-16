@@ -3,34 +3,66 @@
 \docType{class}
 \name{model-class}
 \alias{model-class}
-\title{The S4 class for a model object.}
+\title{An S4 class Representing a Cognitive Model Object.}
+\value{
+An object of class 'model', used to configure and fit cognitive decision models
+  to experimental data.
+}
 \description{
-model class represents how the model parameter associates with the
-experimental factor.
+The 'model' class stores information that defines how parameters in a cognitive model
+are associated with experimental conditions, responses, and other design factors.
+This object is typically created as part of the model specification process and is 
+used as input to fitting functions or simulation routines.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{parameter_map}}{indicates how model parameters associate with  experimental factors.}
+\item{\code{parameter_map}}{A named list or structure indicating how each model parameter 
+varies with experimental factors (e.g., which parameters depend on which conditions).}
 
-\item{\code{accumulators}}{A character vector representing the name of the model accumulator (in the case of the accumulator model).}
+\item{\code{accumulators}}{A character vector naming the accumulators in the model (e.g., for 
+racing models or diffusion models with multiple response alternatives).}
 
-\item{\code{factors}}{A list of factors defined in a design.}
+\item{\code{factors}}{A named list where each element is a factor in the experimental design,
+and each value is a vector of levels for that factor.}
 
-\item{\code{match_map}}{defines what constitutes a correct and an incorrect response.}
+\item{\code{match_map}}{A list specifying which responses are considered correct or incorrect 
+for each condition. Typically used in decision models to differentiate match/non-match.}
 
-\item{\code{constants}}{A list that informs what parameters the user sets to a fixed value.}
+\item{\code{constants}}{A named list of model parameters that are fixed to user-defined values,
+rather than estimated.}
 
-\item{\code{cell_names}}{A character vector representing the name of the condition.}
+\item{\code{cell_names}}{A character vector giving the names of each condition cell in the design
+Boolean array (e.g., 's1.d1.r1', 's1.d1.r2', 's1.d2.r1', etc.), derived from crossing 
+factor levels.}
 
-\item{\code{parameter_x_condition_names}}{A character vector representing the association of the design and the model.}
+\item{\code{parameter_x_condition_names}}{A character vector naming how each parameter is associated
+with particular condition cells.}
 
-\item{\code{model_boolean}}{A 3-D TRUE/FALSE array for allocating parameters to conditions.}
+\item{\code{model_boolean}}{A 3D logical array. Its dimensions are:
+\itemize{
+\item slice: accumulators,
+\item row: cells (i.e., conditions),
+\item column: free parameters
+}, indicating whether a parameter is free to vary for a given accumulator and condition.}
 
-\item{\code{pnames}}{a string vector specifying the names of the free paraemters}
+\item{\code{pnames}}{A character vector listing the names of all free parameters in the model.}
 
-\item{\code{npar}}{the number of the free parameter}
+\item{\code{npar}}{An integer giving the total number of free parameters in the model.}
 
-\item{\code{type}}{a string sepcifying which model to fit}
+\item{\code{type}}{A character string indicating the type of model (e.g., 'fastdm' for the diffusion 
+model described in Voss, Rothermund, and Voss (2004) <doi:10.3758/BF03196893>.)}
 }}
+
+\section{Structure}{
+
+An object of class 'model' contains the following slots:
+}
+
+\section{Purpose}{
+
+This class object encapsulates all necessary mappings and constraints required for model fitting.
+It is used by the fitting engine to determine which parameters vary, what parameters are fixed,
+and how each condition affects the model structure.
+}
 

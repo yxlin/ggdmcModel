@@ -27,7 +27,7 @@ Rcpp::List) where:
 }
 \value{
 A character vector where each element represents a
-parameter-condition binding in the format "parameter.condition".
+parameter-condition binding in the format 'parameter.condition'.
 The special 'M' factor is to represent matching and non-matching
 true/false in the LBA model.
 }

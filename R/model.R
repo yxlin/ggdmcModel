@@ -271,7 +271,7 @@ NULL
 #' \item \code{all} prints all elements.
 #' }. Default to \code{head} method.
 #' @param verbose Logical; if \code{TRUE}, prints design information.
-#' @return A S4 'model' class object containing the following slots:
+#' @return A S4 'model' object containing the following slots:
 #' \itemize{
 #'      \item \code{parameter_map} Stores the assocation between model parameters and the factors.
 #'      \item \code{accumulators} Names of internal accumulators or manifested responses.
@@ -380,7 +380,7 @@ BuildModel <- function(
 #'       parameters, and other model-specific information. This is typically
 #'       created using the `BuildModel` function.
 #'
-#' @return A 'dmi' object or list of 'dmi' objects (multiple subjects),
+#' @return A 'dmi' object or a list of 'dmi' objects (multiple subjects),
 #' with structure:
 #' \itemize{
 #'   \item For choice RT models: Returns a named list of 'dmi' objects

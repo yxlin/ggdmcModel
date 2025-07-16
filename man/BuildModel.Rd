@@ -39,7 +39,7 @@ information. \itemize{
 \item{verbose}{Logical; if \code{TRUE}, prints design information.}
 }
 \value{
-A S4 'model' class object containing the following slots:
+A S4 'model' object containing the following slots:
 \itemize{
      \item \code{parameter_map} Stores the assocation between model parameters and the factors.
      \item \code{accumulators} Names of internal accumulators or manifested responses.

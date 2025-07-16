@@ -425,7 +425,7 @@ build_model_boolean_r(const Rcpp::List &parameter_map_r,
 //' @param parameter_M_r a string vector of parameter x condition.
 //'
 //' @return A character vector where each element represents a
-//' parameter-condition binding in the format "parameter.condition".
+//' parameter-condition binding in the format 'parameter.condition'.
 //' The special 'M' factor is to represent matching and non-matching
 //' true/false in the LBA model.
 //'

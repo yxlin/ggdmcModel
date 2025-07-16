@@ -14,7 +14,7 @@ parameters, and other model-specific information. This is typically
 created using the `BuildModel` function.}
 }
 \value{
-A 'dmi' object or list of 'dmi' objects (multiple subjects),
+A 'dmi' object or a list of 'dmi' objects (multiple subjects),
 with structure:
 \itemize{
   \item For choice RT models: Returns a named list of 'dmi' objects

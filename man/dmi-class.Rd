@@ -3,20 +3,50 @@
 \docType{class}
 \name{dmi-class}
 \alias{dmi-class}
-\title{The S4 class for the Data Model Instance}
+\title{An S4 Class Representing a Data-Model Instance}
+\value{
+An object of class 'dmi' to be passed to functions for model fitting, likelihood 
+evaluation, simulation, or diagnostics.
+}
 \description{
-The class is to represent a data-model instance, joining a model object
-with a data list. Note it is a data list, not a data frame.
+The Data-Model Instance, 'dmi', class binds a model specification object with 
+a corresponding experimental dataset. This structure provides a unified container 
+used for fitting cognitive models, simulating responses, or conducting posterior 
+predictive checks.
+}
+\details{
+Unlike the previous version that used data frames, the `dmi` class expects the 
+data input as a **list** of trial-level records, optimised for internal modelling
+functions.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{model}}{A model object}
+\item{\code{model}}{An object of class 'model' that defines the structure of the cognitive model,
+including parameter mappings, accumulators, and condition associations.}
 
-\item{\code{data}}{A data list}
+\item{\code{data}}{A list representing the observed dataset. Each element typically corresponds to 
+a condition or trial grouping, containing relevant variables (e.g., RTs, responses).}
 
-\item{\code{node_1_index}}{A LBA specific parameter, indicating the node 1 index}
+\item{\code{node_1_index}}{An internal integer matrix used in LBA-type models to indicate the 
+accumulator or node associated with the correct response (e.g., index of node 1).}
 
-\item{\code{is_positive_drift}}{Whether the drift rate is positive}
+\item{\code{is_positive_drift}}{A logical flag used in models where drift direction matters, 
+ indicating whether the modelled drift rate is constrained to be positive (in the LBA model)
+ or is going to the positive direction (in the DDM). This can be important for proper 
+interpretation of parameters.}
 }}
+
+\section{Structure}{
+
+An object of class 'dmi' has the following slots:
+}
+
+\section{Purpose}{
+
+This class provides a complete representation of the modelling context by combining the experimental 
+data and model structure. It serves as the standard input to fitting algorithms, allowing for 
+parameter estimation, simulation, and model checking in accumulator-based cognitive models 
+(e.g., LBA, DDM).
+}
 
