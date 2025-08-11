@@ -114,7 +114,7 @@ NULL
         }
     } else {
         # Short list: print everything
-        message(what_info, n, " ina total:")
+        message(n, what_info, "in total:")
         message(paste(pnames, collapse = "\t"))
     }
 }
