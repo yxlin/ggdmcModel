@@ -48,6 +48,6 @@ testthat::expect_error(
         accumulators = c("r1", "r2", "r3", "r4"),
         type = "lba"
     ),
-    regexp = "The number of levels for 'S' must match the number of accumulators (model_utils.cpp.)",
+    regexp = "For accumulator models, the number of levels for 'S' must match the number of accumulators (model_utils.cpp.)",
     fixed = TRUE # Forces exact match (no regex interpretation)
 )
