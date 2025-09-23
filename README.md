@@ -7,10 +7,13 @@
 [![R-CMD-check](https://github.com/yxlin/ggdmcModel/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/yxlin/ggdmcModel/actions/workflows/R-CMD-check.yaml)
 
 
-**ggdmcModel** provides a suite of tools for specifying and examining experimental designs for choice response time models, such as the Diffusion Decision Model (DDM) and Linear Ballistic Accumulator (LBA).  
-It enables users to define how experimental factors influence one or more model parameters using R-style formula syntax, while ensuring logical consistency of these associations.  
+**ggdmcModel 0.2.9.1 (development)** provides tools for specifying and examining experimental designs for choice response time models, including the **Diffusion Decision Model (DDM)** and **Linear Ballistic Accumulator (LBA)**.  
 
-The package integrates with the [`ggdmc`](https://cran.r-project.org/package=ggdmc) package, which employs Differential Evolution Markov Chain Monte Carlo (DE-MCMC) sampling for parameter estimation in hierarchical Bayesian models.
+Users can define how experimental factors influence model parameters using R-style formula syntax, which automatic checks to ensure logical consistency of parameter-factor mappings.
+
+**New in 0.2.9.1 (development)**: Support for **Cognitive Diagnostic Models (CDM)**, enabling latent skill diagnosis and mastery modelling.
+
+The package integrates with the [`ggdmc`](https://cran.r-project.org/package=ggdmc) package, which implements **Differential Evolution Markov Chain Monte Carlo (DE-MCMC)** sampling for parameter estimation in hierarchical Bayesian models.
 
 ---
 
