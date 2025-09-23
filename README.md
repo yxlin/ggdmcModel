@@ -28,9 +28,11 @@ The package integrates with the [`ggdmc`](https://cran.r-project.org/package=ggd
 
 ## 📥 Installation
 
-From CRAN:
+### Development version from GitHub
 ```r
-install.packages("ggdmcModel")
+# install.packages("remotes")
+remotes::install_github("yxlin/ggdmcModel", ref = "dev")
+
 ```
 
 ## 🚀 Getting Started
