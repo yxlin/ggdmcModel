@@ -28,7 +28,7 @@ combination.
 \description{
 Generates an integer matrix mapping experimental design cells to their
 corresponding indexes of the node 1 accumulator. The node 1 accumulator
-is the theoretical accumulator that reaches the threshold first. This 
+is the theoretical accumulator that reaches the threshold first. This
 function is primarily used for the LBA model.
 }
 \details{

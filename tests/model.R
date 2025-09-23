@@ -29,6 +29,245 @@
 "_PACKAGE"
 NULL
 
+#' Map Experimental Conditions to Model Parameters
+#'
+#' Binds experimental conditions to model parameters by combining parameter
+#' mappings and experimental factors, automatically handling the \code{M}
+#' (matching) factor.
+#'
+#' @name bind_condition2parameters_r
+#' @title Map Experimental Conditions to Model Parameters
+#'
+#' @param parameter_map_r A named list. Names are parameter names; each element
+#'   is a character vector of factor tags (e.g., \code{"1"}, \code{"S"}, \code{"M"}).
+#' @param factors_r A named list of experimental factors. Names are factor names;
+#'   elements are character vectors of factor levels (e.g., \code{S = c("s1","s2")}).
+#'
+#' @return A character vector where each element is a parameter–condition binding,
+#'   e.g., \code{"mean_v.s1.true"}.
+#'
+#' @details The function converts the inputs to C++ maps, expands conditions,
+#'   and handles the LBA matching factor \code{M} (true/false) when present.
+#'
+#' @examples
+#' p_map <- list(A = "1", B = "1", t0 = "1", mean_v = c("M", "S"), sd_v = "1", st0 = "1")
+#' factors <- list(S = c("s1", "s2"))
+#' result1 <- bind_condition2parameters_r(p_map, factors)
+#' result1
+#'
+#' result2 <- split_parameter_x_condition(parameter_M)
+#' # [[1]]
+#' # [1] "A"
+#' #
+#' # [[2]]
+#' # [1] "B"
+#' #
+#' # [[3]]
+#' # [1] "mean_v" "s1"     "false"
+#' #
+#' # [[4]]
+#' # [1] "mean_v" "s1"     "true"
+#' #
+#' # [[5]]
+#' # [1] "mean_v" "s2"     "false"
+#' #
+#' # [[6]]
+#' # [1] "mean_v" "s2"     "true"
+#' #
+#' # [[7]]
+#' # [1] "sd_v"
+#' #
+#' # [[8]]
+#' # [1] "st0"
+#' #
+#' # [[9]]
+#' # [1] "t0"
+#'
+#' @export
+NULL
+
+#' Find All Possible Conditions
+#'
+#' @name build_cell_names_r
+#' @title Find All Possible Conditions
+#'
+#' @description
+#' Constructs all possible condition combinations (i.e., cells)
+#' based on experimental factors, parameter mappings, and response
+#' definitions. Returns both cell names and sorted factor definitions.
+#'
+#' @param parameter_map_r An Rcpp::List where each element is a character
+#' vector mapping parameters to conditions. Names should correspond to
+#'        parameters.
+#' @param factors_r An Rcpp::List where each element is a character vector of
+#'        factor levels. Names should correspond to factor names.
+#' @param responses_r A character vector (std::vector<std::string>) of
+#' response/accumulator names.
+#'
+#' @return An Rcpp::List with two elements:
+#' \itemize{
+#'   \item \code{cell_names}: Character vector of all possible condition
+#' combinations
+#'   \item \code{sortedFactors}: The processed factor structure used to
+#'   generate cells
+#' }
+#'
+#' @details
+#' The function:
+#' \enumerate{
+#'   \item Converts R lists to 'C++' maps for efficient processing
+#'   \item Generates all condition combinations via Cartesian product
+#'   \item Handles special parameter mappings (like mapping accumulators to
+#'  conditions)
+#'   \item Returns both cell names and the factor structure used
+#' }
+#'
+#' @section Typical Workflow:
+#' This function is typically used to:
+#' \enumerate{
+#'   \item Establish the full experimental design space
+#'   \item Verify factor/parameter compatibility
+#'   \item Generate condition labels for model specification
+#' }
+#' This function primarily is to debug the internal process of model building.
+#'
+#' @examples
+#' # A simple example
+#' p_map <- list(
+#'     A = "1", B = "1", t0 = "1", mean_v = "M", sd_v = "1",
+#'     st0 = "1"
+#' )
+#' factors <- list(S = c("s1", "s2"))
+#' responses <- c("r1", "r2")
+#' result <- build_cell_names_r(p_map, factors, responses)
+#'
+#' # cat("B (2 factors), t0, mean_v (3 factors), sd_v (2 factors)")
+#' p_map <- list(
+#'     A = "H", B = c("S", "G"), t0 = "E", mean_v = c("D", "H", "M"),
+#'     sd_v = c("D", "M"), st0 = "1"
+#' )
+#' factors <- list(
+#'     S = c("s1", "s2", "s3"), D = c("d1", "d2"), E = c("e1", "e2"),
+#'     G = c("g1", "g2", "g3"), H = c("h1", "h2", "h3", "h4", "h5")
+#' )
+#' responses <- c("r1", "r2", "r3")
+#' result <- build_cell_names_r(p_map, factors, responses)
+#' @export
+NULL
+
+#' Build Model Boolean
+#'
+#' @name build_model_boolean_r
+#' @title Build Model Boolean
+#' @description
+#' Constructs a 3D boolean array indicating
+#' parameter-condition-response association to represent the experimental
+#' design.
+#'
+#' @param parameter_map_r An Rcpp::List where each element maps parameters
+#'        to conditions (character vector). The element names indicates
+#'        the model parameter. The element content is the factor name that
+#'        assocaites with a model parameter.  \code{1} represents no
+#'        assocation.
+#' @param factors_r An Rcpp::List where each element defines factor levels
+#'        (character vector). Names should be factor names.
+#' @param accumulators_r A character vector (std::vector<std::string>)
+#'        of accumulator names. I use `accumulator` to remind the
+#'        difference of the implicit accumulator and the manifested
+#'        response. Mostly, you may mix the two; however, sometimes,
+#'        merging the two concepts may result in conceptual errors.
+#' @param match_map_r An Rcpp::List that defines the mapping between
+#' stimuli and responses, specifying which response are considered correct
+#' or incorrect. (This is a nested list structure).
+#'
+#' @return An R logical array with dimensions:
+#' \itemize{
+#'   \item 1st dimension: Parameters (column)
+#'   \item 2nd dimension: Conditions (row)
+#'   \item 3rd dimension: Responses  (slice)
+#' }
+#' Where `TRUE` indicates the model assumes that a model parameter (1st
+#' dimension) affects a condition (2nd dimension) at a particular response
+#' (3rd dimension).
+#'
+#' @details
+#' The function:
+#' \enumerate{
+#'   \item Converts all R inputs to C++ maps for efficient processing
+#'   \item Builds experimental design cells using \code{build_cell_names}
+#'   \item Processes parameter-condition mappings with \code{add_M}
+#'   \item Applies match map constraints to determine valid combinations
+#'   \item Returns results as a 3D logical array compatible with R
+#' }
+#'
+#' @section Typical Use Case:
+#' Used when you need to:
+#' \itemize{
+#'   \item Validate experimental design completeness
+#'   \item Generate design matrices for model fitting
+#'   \item Check response-condition constraints
+#' }
+#'
+#' @examples
+#' p_map <- list(
+#'     A = "1", B = "1", mean_v = "M", sd_v = "1", st0 = "1",
+#'     t0 = "1"
+#' )
+#' match_map <- list(M = list(s1 = "r1", s2 = "r2"))
+#' factors <- list(S = c("s1", "s2"))
+#' accumulators <- c("r1", "r2")
+#' result <- build_model_boolean_r(p_map, factors, accumulators, match_map)
+#'
+#' @export
+NULL
+
+#' Get Free Parameter Names from Model
+#'
+#' @name get_pnames
+#' @title Get Free Parameter Names from Model
+#'
+#' @description
+#' Extracts the names of free parameters from an S4 model object, with optional
+#' debugging output to inspect both free and constant parameters.
+#'
+#' @param model_r An S4 object containing the model specification and design
+#' @param debug Logical flag indicating whether to print debugging information
+#'        about both free and fixed parameters (default: FALSE)
+#'
+#' @return A character vector of free parameter names in the model
+#'
+#' @details
+#' The function:
+#' \enumerate{
+#'   \item Creates a new design object from the model
+#'   \item Optionally prints debugging information about all parameters
+#'   \item Returns only the names of free (non-constant) parameters
+#' }
+#'
+#' @section Debugging Output:
+#' When `debug = TRUE`, the function prints:
+#' \itemize{
+#'   \item Free parameters (those being estimated)
+#'   \item Constants (fixed parameters)
+#' }
+#'
+#' @examples
+#' model <- BuildModel(
+#'     p_map = list(
+#'         A = "1", B = "1", mean_v = "M", sd_v = "1", st0 = "1",
+#'         t0 = "1"
+#'     ),
+#'     match_map = list(M = list(s1 = "r1", s2 = "r2")),
+#'     factors = list(S = c("s1", "s2")),
+#'     constants = c(A = 0.75, mean_v.false = 1.5, sd_v = 1, st0 = 0),
+#'     accumulators = c("r1", "r2"),
+#'     type = "lba"
+#' )
+#'
+#' pnames <- get_pnames(model)
+#'
+#' @export
+NULL
 
 .check_match_map <- function(accumulators, factors, match_map) {
     if (is.null(match_map)) {
@@ -118,8 +357,6 @@ NULL
         message(paste(pnames, collapse = "\t"))
     }
 }
-
-
 
 .check_factors <- function(factors) {
     keywords <- c("1", "s", "R", "M")
@@ -214,8 +451,6 @@ NULL
 
 
         # Get all factor columns except 's', 'RT', and 'C'
-        # factor_cols <- setdiff(names(subj_df), c("s", "RT", "C"))
-
         # Ensure S is first and R is last
         factor_cols <- c("S", setdiff(factor_cols, c("S", "R")), "R")
         factor_cols <- factor_cols[factor_cols %in% names(subj_df)]
@@ -231,7 +466,7 @@ NULL
         if (has_C) {
             # Split C values by the same combinations (for tracking)
             c_values <- split(subj_df$C, conditions)
-            # Get unique C value for each condition
+            # Get unique C value for each condition???
             c_unique <- lapply(c_values, function(x) x[1])
             sequence <- order(names(rt_list))
             C_list[[subj_name]] <- c_unique[sequence]
@@ -239,7 +474,6 @@ NULL
 
         sequence <- order(names(rt_list))
         data_list[[subj_name]] <- rt_list[sequence]
-
     }
 
     if (has_C) {
@@ -247,9 +481,44 @@ NULL
     } else {
         return(list(data = data_list))
     }
-
 }
 
+.convert2datalist_nonacc <- function(data) {
+    by_subject <- split(data, data$s)
+
+    subject_names <- names(by_subject)
+    subject_names <- subject_names[order(as.numeric(subject_names))]
+    by_subject <- by_subject[subject_names]
+
+    n_subject <- length(by_subject)
+    data_list <- list()
+
+    for (subj_name in subject_names) {
+        subj_df <- by_subject[[subj_name]]
+        factor_cols <- setdiff(names(subj_df), c("s", "i", "C"))
+
+
+        factor_cols <- c("S", setdiff(factor_cols, c("S", "R")), "R")
+        factor_cols <- factor_cols[factor_cols %in% names(subj_df)]
+
+
+        conditions <- apply(subj_df[, factor_cols, drop = FALSE], 1, function(row) {
+            paste(row, collapse = ".")
+        })
+
+        # Split "dependent variables" by these combinations
+        dv_list <- split(subj_df$C, conditions)
+
+        if (length(factor_cols) == 0) {
+            message("No factorial conditon was detected for subject: ", subj_name)
+            names(dv_list) <- "Cell"
+        }
+
+        sequence <- order(names(dv_list))
+        data_list[[subj_name]] <- dv_list[sequence]
+    }
+    list(data = data_list)
+}
 
 
 #' Build a model object
@@ -264,7 +533,7 @@ NULL
 #' @param match_map Maps stimulus conditions to response levels, indicating correctness.
 #' @param constants Allows the user to fix certain model parameters at constant values.
 #' @param type The model type used in the package, "fastdm", "hyper", or "lba".
-#' @param print_method a string indicating how you want the function to print model 
+#' @param print_method a string indicating how you want the function to print model
 #' information. \itemize{
 #' \item \code{head} prints the first few elements.
 #' \item \code{sample} samples and prints a handful of elements.
@@ -328,13 +597,16 @@ BuildModel <- function(
     match_map = list(M = list("s1" = "r1", "s2" = "r2")),
     constants = c(sd_v = 1, st0 = 0),
     type = "lba",
-    print_method =  "head",
-    verbose = TRUE) 
-{
+    print_method = "head",
+    verbose = TRUE) {
     .check_factors(factors)
     .check_p_map(p_map)
-    .check_accumulators(accumulators)
-    .check_match_map(accumulators, factors, match_map)
+
+
+    if (type %in% c("lba", "fastdm", "hyper")) {
+        .check_accumulators(accumulators)
+        .check_match_map(accumulators, factors, match_map)
+    }
 
     cell_and_factor_names <- build_cell_names_r(p_map, factors, accumulators)
     parameter_x_condition_names <- bind_condition2parameters_r(p_map, factors)
@@ -343,13 +615,17 @@ BuildModel <- function(
     sort_constant_names <- sort(names(constants))
     sort_p_map_names <- sort(names(p_map))
 
+    cn <- cell_and_factor_names[[1]]
+    cell_names <- if (length(cn) == 1L && !nzchar(cn)) "Cell" else cn
+
+
     out <- new("model",
         parameter_map = p_map[sort_p_map_names],
         accumulators = accumulators,
         factors = factors,
         match_map = match_map,
         constants = constants[sort_constant_names],
-        cell_names = cell_and_factor_names[[1]],
+        cell_names = cell_names,
         parameter_x_condition_names = parameter_x_condition_names,
         model_boolean = model_boolean,
         pnames = NULL,
@@ -359,6 +635,7 @@ BuildModel <- function(
     out@pnames <- get_pnames(out, FALSE)
     out@npar <- length(out@pnames)
 
+
     if (verbose) {
         .print_names(out@pnames, print_method = print_method)
         .print_names(out@cell_names, what_info = " cell names ", print_method = print_method)
@@ -366,6 +643,9 @@ BuildModel <- function(
 
     out
 }
+
+`%||%` <- function(a, b) if (!is.null(a)) a else b
+
 
 #' Build Data Model Instance
 #'
@@ -427,39 +707,100 @@ BuildModel <- function(
 #'     accumulators = c("r1", "r2"),
 #'     type = "lba"
 #' )
-#' 
+#'
 #' dat <- data.frame(
-#'   RT = c(0.7802726, 0.7890208, 1.3222672, 0.8376305, 0.7144698),
-#'   R  = c("r1", "r1", "r2", "r1", "r1"),
-#'   s  = c(1, 1, 1, 1, 1),
-#'   S  = c("s1", "s1", "s1", "s1", "s1"),
-#'   stringsAsFactors = FALSE
+#'     RT = c(0.7802726, 0.7890208, 1.3222672, 0.8376305, 0.7144698),
+#'     R = c("r1", "r1", "r2", "r1", "r1"),
+#'     s = c(1, 1, 1, 1, 1),
+#'     S = c("s1", "s1", "s1", "s1", "s1"),
+#'     stringsAsFactors = FALSE
 #' )
 #'
 #' sub_dmis <- BuildDMI(dat, model)
 #'
 #' @export
-BuildDMI <- function(data, model) {
+BuildDMI <- function(data, model, ...) {
     if (isS4(data)) {
-        stop("Did you enter the model as the 1st argument?")
+        stop("Did you enter the model as the first argument?")
     }
 
-    data_and_c_list <- .convert2datalist(data)
-    data_list <- data_and_c_list[[1]]
+    # grab extra args once
+    dots <- list(...)
 
+    if (model@type == "cdm") {
+        data_and_c_list <- .convert2datalist_nonacc(data)
+    } else {
+        data_and_c_list <- .convert2datalist(data)
+    }
+
+    data_list <- data_and_c_list[[1]]
     nsubject <- length(data_list)
 
+    if (model@type == "cdm") {
+        message("This is an experimental version of the BuildDMI.")
+
+        ## --- 1) Q matrix from ... ---
+        q_matrix <- dots$Q_matrix %||% dots$q_matrix %||%
+            stop("For model@type == 'cdm', provide `q_matrix` (or `Q_matrix`).")
+
+        if (!is.matrix(q_matrix) && !inherits(q_matrix, "Matrix")) {
+            stop("`q_matrix` must be a matrix.")
+        }
+        if (!is.numeric(q_matrix) && !is.integer(q_matrix) && !is.logical(q_matrix)) {
+            stop("`q_matrix` must be numeric/integer/logical.")
+        }
+        if (is.logical(q_matrix)) q_matrix <- q_matrix * 1L
+
+        K <- ncol(q_matrix)
+        if (is.null(K) || K < 1L) stop("`q_matrix` must have at least 1 column (skills).")
+        L <- 2L^K # number of latent classes for DINA/DINO style models
+
+        ## --- 2) pi prior from ... (optional) ---
+        prior_pi <- dots$pi_prior %||% dots$pi
+        if (is.null(prior_pi)) {
+            prior_pi <- rep(1 / L, L) # default uniform
+        } else {
+            prior_pi <- as.numeric(prior_pi)
+            if (length(prior_pi) != L) {
+                stop(sprintf("`pi_prior` length (%d) must equal 2^K = %d.", length(prior_pi), L))
+            }
+            if (any(!is.finite(prior_pi)) || any(prior_pi < 0)) {
+                stop("`pi_prior` must be nonnegative and finite.")
+            }
+            s <- sum(prior_pi)
+            if (!isTRUE(all.equal(s, 1))) prior_pi <- prior_pi / s # normalize
+        }
+
+        out <- lapply(seq_len(nsubject), function(i) {
+            new("dmi",
+                model = model,
+                data = data_list[[i]],
+                node_1_index = q_matrix, # Q
+                is_positive_drift = prior_pi # storing pi here (consider a dedicated slot later)
+            )
+        })
+        names(out) <- names(data_list)
+        return(out)
+    }
+
+    ## --- existing branches unchanged ---
     if (model@type == "lba") {
         out <- lapply(seq_len(nsubject), function(i) {
             new("dmi",
                 model = model,
                 data = data_list[[i]],
-                node_1_index = get_node_1_index_r(model@parameter_map, model@factors, model@accumulators),
+                node_1_index = get_node_1_index_r(
+                    model@parameter_map,
+                    model@factors, model@accumulators
+                ),
                 is_positive_drift = rep(TRUE, length(model@accumulators))
             )
         })
         names(out) <- names(data_list)
-    } else if (model@type == "hyper") {
+        return(out)
+    }
+
+    if (model@type == "hyper") {
         data <- attr(data, "parameters")
 
         out <- new("dmi",
@@ -468,11 +809,9 @@ BuildDMI <- function(data, model) {
             node_1_index = NULL,
             is_positive_drift = NULL
         )
-    } else if (model@type == "norm") {
-        stop("Please use 'lba' for the standard LBA model")
-    } else if (model@type == "rd") {
-        stop("Please use 'fastdm' for the standard DD model")
-    } else if (model@type == "fastdm") {
+        return(out)
+    }
+    if (model@type == "fastdm") {
         out <- lapply(seq_len(nsubject), function(i) {
             new("dmi",
                 model = model,
@@ -482,9 +821,13 @@ BuildDMI <- function(data, model) {
             )
         })
         names(out) <- names(data_list)
-    } else {
-        stop("Model type not built yet.")
+        return(out)
     }
-
-    out
+    if (model@type == "norm") {
+        stop("Please use 'lba' for the standard LBA model")
+    }
+    if (model@type == "rd") {
+        stop("Please use 'fastdm' for the standard DD model")
+    }
+    stop("Model type not built yet.")
 }

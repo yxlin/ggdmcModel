@@ -96,40 +96,40 @@ BEGIN_RCPP
 END_RCPP
 }
 // build_cell_names_r
-Rcpp::List build_cell_names_r(const Rcpp::List& parameter_map_r, const Rcpp::List& factors_r, const std::vector<std::string>& responses_r);
-RcppExport SEXP _ggdmcModel_build_cell_names_r(SEXP parameter_map_rSEXP, SEXP factors_rSEXP, SEXP responses_rSEXP) {
+Rcpp::List build_cell_names_r(const Rcpp::List& parameter_map_r, const Rcpp::Nullable<Rcpp::List>& factors_r, const Rcpp::Nullable<Rcpp::CharacterVector> accumulators_r);
+RcppExport SEXP _ggdmcModel_build_cell_names_r(SEXP parameter_map_rSEXP, SEXP factors_rSEXP, SEXP accumulators_rSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type parameter_map_r(parameter_map_rSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type factors_r(factors_rSEXP);
-    Rcpp::traits::input_parameter< const std::vector<std::string>& >::type responses_r(responses_rSEXP);
-    rcpp_result_gen = Rcpp::wrap(build_cell_names_r(parameter_map_r, factors_r, responses_r));
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::List>& >::type factors_r(factors_rSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector> >::type accumulators_r(accumulators_rSEXP);
+    rcpp_result_gen = Rcpp::wrap(build_cell_names_r(parameter_map_r, factors_r, accumulators_r));
     return rcpp_result_gen;
 END_RCPP
 }
 // build_model_boolean_r
-Rcpp::LogicalVector build_model_boolean_r(const Rcpp::List& parameter_map_r, const Rcpp::List& factors_r, const std::vector<std::string>& accumulators_r, const Rcpp::List& match_map_r);
+Rcpp::LogicalVector build_model_boolean_r(const Rcpp::List& parameter_map_r, const Rcpp::Nullable<Rcpp::List>& factors_r, Rcpp::Nullable<Rcpp::CharacterVector> accumulators_r, Rcpp::Nullable<Rcpp::List> match_map_r);
 RcppExport SEXP _ggdmcModel_build_model_boolean_r(SEXP parameter_map_rSEXP, SEXP factors_rSEXP, SEXP accumulators_rSEXP, SEXP match_map_rSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type parameter_map_r(parameter_map_rSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type factors_r(factors_rSEXP);
-    Rcpp::traits::input_parameter< const std::vector<std::string>& >::type accumulators_r(accumulators_rSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type match_map_r(match_map_rSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::List>& >::type factors_r(factors_rSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type accumulators_r(accumulators_rSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::List> >::type match_map_r(match_map_rSEXP);
     rcpp_result_gen = Rcpp::wrap(build_model_boolean_r(parameter_map_r, factors_r, accumulators_r, match_map_r));
     return rcpp_result_gen;
 END_RCPP
 }
 // bind_condition2parameters_r
-std::vector<std::string> bind_condition2parameters_r(const Rcpp::List& parameter_map_r, const Rcpp::List& factors_r);
+std::vector<std::string> bind_condition2parameters_r(const Rcpp::List& parameter_map_r, const Rcpp::Nullable<Rcpp::List>& factors_r);
 RcppExport SEXP _ggdmcModel_bind_condition2parameters_r(SEXP parameter_map_rSEXP, SEXP factors_rSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type parameter_map_r(parameter_map_rSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List& >::type factors_r(factors_rSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::List>& >::type factors_r(factors_rSEXP);
     rcpp_result_gen = Rcpp::wrap(bind_condition2parameters_r(parameter_map_r, factors_r));
     return rcpp_result_gen;
 END_RCPP

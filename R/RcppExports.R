@@ -4,260 +4,60 @@
 #' @rdname bind_condition2parameters_r
 #' @export
 split_parameter_x_condition <- function(parameter_M_r) {
-    .Call('_ggdmcModel_split_parameter_x_condition', PACKAGE = 'ggdmcModel', parameter_M_r)
+    .Call(`_ggdmcModel_split_parameter_x_condition`, parameter_M_r)
 }
 
 #' @rdname parameter_mapping_functions
 #' @export
 is_core_parameter_x_condition <- function(parameter_map_r, factors_r) {
-    .Call('_ggdmcModel_is_core_parameter_x_condition', PACKAGE = 'ggdmcModel', parameter_map_r, factors_r)
+    .Call(`_ggdmcModel_is_core_parameter_x_condition`, parameter_map_r, factors_r)
 }
 
 #' @rdname parameter_mapping_functions
 #' @export
 is_parameter_x_condition <- function(parameter_map_r, factors_r) {
-    .Call('_ggdmcModel_is_parameter_x_condition', PACKAGE = 'ggdmcModel', parameter_map_r, factors_r)
+    .Call(`_ggdmcModel_is_parameter_x_condition`, parameter_map_r, factors_r)
 }
 
 #' @rdname parameter_mapping_functions
 #' @export
 get_stimulus_level_r <- function(parameter_map_r, factors_r, accumulators_r) {
-    .Call('_ggdmcModel_get_stimulus_level_r', PACKAGE = 'ggdmcModel', parameter_map_r, factors_r, accumulators_r)
+    .Call(`_ggdmcModel_get_stimulus_level_r`, parameter_map_r, factors_r, accumulators_r)
 }
 
 #' @rdname parameter_mapping_functions
 #' @export
 get_factor_cells_r <- function(parameter_map_r, factors_r, accumulators_r) {
-    .Call('_ggdmcModel_get_factor_cells_r', PACKAGE = 'ggdmcModel', parameter_map_r, factors_r, accumulators_r)
+    .Call(`_ggdmcModel_get_factor_cells_r`, parameter_map_r, factors_r, accumulators_r)
 }
 
 #' @rdname model_parameter_utils
 #' @export
 table_parameters <- function(model_r, parameters_r) {
-    .Call('_ggdmcModel_table_parameters', PACKAGE = 'ggdmcModel', model_r, parameters_r)
+    .Call(`_ggdmcModel_table_parameters`, model_r, parameters_r)
 }
 
 #' @rdname model_parameter_utils
 #' @export
 print_parameter_map <- function(model_r) {
-    .Call('_ggdmcModel_print_parameter_map', PACKAGE = 'ggdmcModel', model_r)
+    .Call(`_ggdmcModel_print_parameter_map`, model_r)
 }
 
-#' Find All Possible Conditions
-#'
-#' @description
-#' Constructs all possible condition combinations (i.e., cells)
-#' based on experimental factors, parameter mappings, and response
-#' definitions. Returns both cell names and sorted factor definitions.
-#'
-#' @param parameter_map_r An Rcpp::List where each element is a character
-#' vector mapping parameters to conditions. Names should correspond to
-#'        parameters.
-#' @param factors_r An Rcpp::List where each element is a character vector of
-#'        factor levels. Names should correspond to factor names.
-#' @param responses_r A character vector (std::vector<std::string>) of 
-#' response/accumulator names.
-#'
-#' @return An Rcpp::List with two elements:
-#' \itemize{
-#'   \item \code{cell_names}: Character vector of all possible condition
-#' combinations
-#'   \item \code{sortedFactors}: The processed factor structure used to
-#'   generate cells
-#' }
-#'
-#' @details
-#' The function:
-#' \enumerate{
-#'   \item Converts R lists to 'C++' maps for efficient processing
-#'   \item Generates all condition combinations via Cartesian product
-#'   \item Handles special parameter mappings (like mapping accumulators to 
-#'  conditions)
-#'   \item Returns both cell names and the factor structure used
-#' }
-#'
-#' @section Typical Workflow:
-#' This function is typically used to:
-#' \enumerate{
-#'   \item Establish the full experimental design space
-#'   \item Verify factor/parameter compatibility
-#'   \item Generate condition labels for model specification
-#' }
-#' This function primarily is to debug the internal process of model building.
-#'
-#' @examples
-#' # A simple example
-#' p_map <- list(A = "1", B = "1", t0 = "1", mean_v = "M", sd_v = "1",
-#'                st0 ="1")
-#' factors <- list(S = c("s1", "s2"))
-#' responses <- c("r1", "r2")
-#' result <- build_cell_names_r(p_map, factors, responses)
-#'
-#' # cat("B (2 factors), t0, mean_v (3 factors), sd_v (2 factors)")
-#' p_map <- list(
-#'     A = "H", B = c("S", "G"), t0 = "E", mean_v = c("D", "H", "M"),
-#'     sd_v = c("D", "M"), st0 = "1"
-#' )
-#' factors <- list(
-#'     S = c("s1", "s2", "s3"), D = c("d1", "d2"), E = c("e1", "e2"),
-#'     G = c("g1", "g2", "g3"), H = c("h1", "h2", "h3", "h4", "h5")
-#' )
-#' responses <- c("r1", "r2", "r3")
-#' result <- build_cell_names_r(p_map, factors, responses)
-#'
+#' @rdname build_cell_names_r
 #' @export
-build_cell_names_r <- function(parameter_map_r, factors_r, responses_r) {
-    .Call('_ggdmcModel_build_cell_names_r', PACKAGE = 'ggdmcModel', parameter_map_r, factors_r, responses_r)
+build_cell_names_r <- function(parameter_map_r, factors_r = NULL, accumulators_r = NULL) {
+    .Call(`_ggdmcModel_build_cell_names_r`, parameter_map_r, factors_r, accumulators_r)
 }
 
-#' Build Model Boolean
-#'
-#' @description
-#' Constructs a 3D boolean array indicating
-#' parameter-condition-response association to represent the experimental
-#' design.
-#'
-#' @param parameter_map_r An Rcpp::List where each element maps parameters
-#'        to conditions (character vector). The element names indicates
-#'        the model parameter. The element content is the factor name that
-#'        assocaites with a model parameter.  \code{1} represents no
-#'        assocation.
-#' @param factors_r An Rcpp::List where each element defines factor levels
-#'        (character vector). Names should be factor names.
-#' @param accumulators_r A character vector (std::vector<std::string>)
-#'        of accumulator names. I use `accumulator` to remind the
-#'        difference of the implicit accumulator and the manifested
-#'        response. Mostly, you may mix the two; however, sometimes,
-#'        merging the two concepts may result in conceptual errors.
-#' @param match_map_r An Rcpp::List that defines the mapping between
-#' stimuli and responses, specifying which response are considered correct
-#' or incorrect. (This is a nested list structure).
-#'
-#' @return An R logical array with dimensions:
-#' \itemize{
-#'   \item 1st dimension: Parameters (column)
-#'   \item 2nd dimension: Conditions (row)
-#'   \item 3rd dimension: Responses  (slice)
-#' }
-#' Where `TRUE` indicates the model assumes that a model parameter (1st
-#' dimension) affects a condition (2nd dimension) at a particular response
-#' (3rd dimension).
-#'
-#' @details
-#' The function:
-#' \enumerate{
-#'   \item Converts all R inputs to C++ maps for efficient processing
-#'   \item Builds experimental design cells using \code{build_cell_names}
-#'   \item Processes parameter-condition mappings with \code{add_M}
-#'   \item Applies match map constraints to determine valid combinations
-#'   \item Returns results as a 3D logical array compatible with R
-#' }
-#'
-#' @section Typical Use Case:
-#' Used when you need to:
-#' \itemize{
-#'   \item Validate experimental design completeness
-#'   \item Generate design matrices for model fitting
-#'   \item Check response-condition constraints
-#' }
-#'
-#' @examples
-#' p_map <- list(A = "1", B = "1", mean_v = "M", sd_v = "1", st0 = "1",
-#'               t0 = "1")
-#' match_map <- list(M = list(s1 = "r1", s2 = "r2"))
-#' factors <- list(S = c("s1", "s2"))
-#' accumulators <- c("r1", "r2")
-#' result <- build_model_boolean_r(p_map, factors, accumulators, match_map)
-#'
+#' @rdname build_model_boolean_r
 #' @export
-build_model_boolean_r <- function(parameter_map_r, factors_r, accumulators_r, match_map_r) {
-    .Call('_ggdmcModel_build_model_boolean_r', PACKAGE = 'ggdmcModel', parameter_map_r, factors_r, accumulators_r, match_map_r)
+build_model_boolean_r <- function(parameter_map_r, factors_r = NULL, accumulators_r = NULL, match_map_r = NULL) {
+    .Call(`_ggdmcModel_build_model_boolean_r`, parameter_map_r, factors_r, accumulators_r, match_map_r)
 }
 
-#' Map Experimental Conditions to Model Parameters
-#'
-#' @description
-#' Binds experimental conditions to model parameters by combining parameter
-#' mappings and experimental factors, automatically handling the 'M' (
-#' matching) factor, specifically for the Linear Ballisitic Accumulation Model.
-#' \code{split_parameter_x_condition} separates bound parameters and conditions.
-#'
-#' @param parameter_map_r A named list received from R (converted to
-#' Rcpp::List) where:
-#' \itemize{
-#'   \item Names correspond to parameter names
-#'   \item Elements are character vectors mapping conditions to parameter
-#'}
-#'
-#' @param factors_r A named list of experimental factors where:
-#' \itemize{
-#'   \item Names are factor names
-#'   \item Elements are character vectors of factor levels
-#' }
-#' @param parameter_M_r a string vector of parameter x condition.
-#'
-#' @return A character vector where each element represents a
-#' parameter-condition binding in the format 'parameter.condition'.
-#' The special 'M' factor is to represent matching and non-matching
-#' true/false in the LBA model.
-#'
-#' @details
-#' This function:
-#' \enumerate{
-#'   \item Converts R lists to C++ std::map containers for efficient lookup
-#'   \item Processes the parameter mapping through `add_M()` to handle response
-#' mappings
-#'   \item Returns human-readable parameter-condition pairs  
-#' }
-#'
-#' @section C++ Implementation:
-#' The function uses:
-#' \itemize{
-#'   \item Rcpp::List to take the 'list' from R and convert it to C++
-#' std::map for efficient key-value lookups
-#'   \item std::vector for storing the resulting parameter-condition pairs
-#'   \item Rcpp::CharacterVector for returning the result to R
-#' }
-#'
-#' @examples
-#' p_map <- list(A = "1", B = "1", t0 = "1", mean_v = c("M", "S"), sd_v = "1",
-#'           st0 = "1")
-#' factors <- list(S = c("s1", "s2"))
-#' parameter_M <-bind_condition2parameters_r(p_map, factors)
-#' # [1] "A"               "B"               "mean_v.s1.false" "mean_v.s1.true"
-#' # [5] "mean_v.s2.false" "mean_v.s2.true"  "sd_v"            "st0"
-#' # [9] "t0"
-#'
-#' result <- split_parameter_x_condition(parameter_M)
-#' # [[1]]
-#' # [1] "A"
-#' #
-#' # [[2]]
-#' # [1] "B"
-#' #
-#' # [[3]]
-#' # [1] "mean_v" "s1"     "false"
-#' #
-#' # [[4]]
-#' # [1] "mean_v" "s1"     "true"
-#' #
-#' # [[5]]
-#' # [1] "mean_v" "s2"     "false"
-#' #
-#' # [[6]]
-#' # [1] "mean_v" "s2"     "true"
-#' #
-#' # [[7]]
-#' # [1] "sd_v"
-#' #
-#' # [[8]]
-#' # [1] "st0"
-#' #
-#' # [[9]]
-#' # [1] "t0"
 #' @export
-bind_condition2parameters_r <- function(parameter_map_r, factors_r) {
-    .Call('_ggdmcModel_bind_condition2parameters_r', PACKAGE = 'ggdmcModel', parameter_map_r, factors_r)
+bind_condition2parameters_r <- function(parameter_map_r, factors_r = NULL) {
+    .Call(`_ggdmcModel_bind_condition2parameters_r`, parameter_map_r, factors_r)
 }
 
 #' Get Index Mapping for the Node 1 Accumulator
@@ -265,7 +65,7 @@ bind_condition2parameters_r <- function(parameter_map_r, factors_r) {
 #' @description
 #' Generates an integer matrix mapping experimental design cells to their
 #' corresponding indexes of the node 1 accumulator. The node 1 accumulator
-#' is the theoretical accumulator that reaches the threshold first. This 
+#' is the theoretical accumulator that reaches the threshold first. This
 #' function is primarily used for the LBA model.
 #'
 #' @param parameter_map_r An Rcpp::List where each element is a character
@@ -305,50 +105,12 @@ bind_condition2parameters_r <- function(parameter_map_r, factors_r) {
 #'
 #' @export
 get_node_1_index_r <- function(parameter_map_r, factors_r, accumulators_r) {
-    .Call('_ggdmcModel_get_node_1_index_r', PACKAGE = 'ggdmcModel', parameter_map_r, factors_r, accumulators_r)
+    .Call(`_ggdmcModel_get_node_1_index_r`, parameter_map_r, factors_r, accumulators_r)
 }
 
-#' Get Free Parameter Names from Model
-#'
-#' @description
-#' Extracts the names of free parameters from an S4 model object, with optional
-#' debugging output to inspect both free and constant parameters.
-#'
-#' @param model_r An S4 object containing the model specification and design
-#' @param debug Logical flag indicating whether to print debugging information
-#'        about both free and fixed parameters (default: FALSE)
-#'
-#' @return A character vector of free parameter names in the model
-#'
-#' @details
-#' The function:
-#' \enumerate{
-#'   \item Creates a new design object from the model
-#'   \item Optionally prints debugging information about all parameters
-#'   \item Returns only the names of free (non-constant) parameters
-#' }
-#'
-#' @section Debugging Output:
-#' When `debug = TRUE`, the function prints:
-#' \itemize{
-#'   \item Free parameters (those being estimated)
-#'   \item Constants (fixed parameters)
-#' }
-#'
-#' @examples
-#' model <- BuildModel(
-#'   p_map = list(A = "1", B = "1", mean_v = "M", sd_v = "1", st0 = "1",
-#'                t0 = "1"),
-#'   match_map = list(M = list(s1 = "r1", s2 = "r2")),
-#'   factors = list(S = c("s1", "s2")),
-#'   constants = c(A = 0.75, mean_v.false = 1.5, sd_v = 1, st0 = 0),
-#'   accumulators = c("r1", "r2"),
-#'   type = "lba")
-#'
-#' pnames <- get_pnames(model)
-#'
+#' @rdname get_pnames
 #' @export
 get_pnames <- function(model_r, debug = FALSE) {
-    .Call('_ggdmcModel_get_pnames', PACKAGE = 'ggdmcModel', model_r, debug)
+    .Call(`_ggdmcModel_get_pnames`, model_r, debug)
 }
 
